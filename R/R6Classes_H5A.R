@@ -20,24 +20,59 @@
 
 
 
-##' Class for representing HDF5 attributes
-##' 
-##' This class represents an HDF5 group-id. It inherits all functions of the
-##' \code{\link{H5RefClass-class}}. 
-##'
-##' @docType class
-##' @importFrom R6 R6Class
-##' @return Object of class \code{\link{H5A}}. 
-##' @export
-##' @author Holger Hoefling
-##' @seealso H5Class_overview
+#' Class for representing HDF5 attributes
+#' 
+#' This class represents an HDF5 group-id. It inherits all functions of the
+#' \code{\link{H5RefClass-class}}. 
+#'
+#' @docType class
+#' @name H5A
+#' @rdname H5A-class
+#' @importFrom R6 R6Class
+#' @return Object of class \code{\link{H5A}}. 
+#' @author Holger Hoefling
+#' 
+#' @template commonFGDTA
+#' 
+#' @section Methods:
+#' \describe{
+#'   \item{\code{get_info()}}{This function implements the HDF5-API function H5Aget_info. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetInfo} for details.}
+#'   \item{\code{attr_name()}}{This function implements the HDF5-API function H5Aget_name. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetName} for details.}
+#'   \item{\code{get_space()}}{This function implements the HDF5-API function H5Aget_space. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetSpace} for details.}
+#'   \item{\code{get_type(native = TRUE)}}{This function implements the HDF5-API function H5Aget_type. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetType} for details.}
+#'   \item{\code{get_storage_size()}}{This function implements the HDF5-API function H5Aget_storage_size. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetStorageSize} for details.}
+#'   \item{\code{read_low_level(buffer, mem_type, duplicate_buffer = FALSE)}}{Only for advanced users. See documentation for \code{read} instead. This function implements the HDF5-API function H5Aread. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-Read} for details.}
+#'   \item{\code{read(flags = getOption("hdf5r.h5tor_default"), drop = TRUE)}}{Reads the data of the attribute and returns it as an R-object
+#'     \strong{Parameters:}
+#'       \describe{
+#'         \item{flags}{Conversion rules for integer values. See also \code{\link{h5const}}}
+#'         \item{drop}{Logical. Should dimensions of length 1 be dropped (R-default for arrays)}
+#'        }
+#'   }
+#'   \item{\code{write_low_level(buffer, mem_type)}}{Only for advanced users. See documentation for \code{write} instead. This function implements the HDF5-API function H5Awrite. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-Write} for details.}
+#'   \item{\code{write(robj, mem_type = NULL, flush = getOption("hdf5r.flush_on_write"))}}{Writes the data of \code{robj} to the attribute
+#'     \strong{Parameters:}
+#'       \describe{
+#'         \item{robj}{The object to write into the attribute}
+#'         \item{mem_type}{The memory data type to use when transferring from HDF5 to intermediate storage. This is an advanced development feature and may be removed in the future.}
+#'         }
+#'   }
+#'   \item{\code{print(...)}}{Prints information for the dataset
+#'     \strong{Parameters:}
+#'       \describe{
+#'         \item{...}{ignored}
+#'       }
+#'   }
+#'   \item{\code{flush(scope = h5const$H5F_SCOPE_GLOBAL)}}{This function implements the HDF5-API function H5Fflush. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5F.html#File-Flush} for details.}
+#'   \item{\code{get_filename()}}{This function implements the HDF5-API function H5Fget_name. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5F.html#File-GetName} for details.}
+#' }
+NULL
+
+#' @export
 H5A <- R6Class("H5A",
                inherit=H5RefClass,
                public=list(
                    get_info=function() {
-                       "This function implements the HDF5-API function H5Aget_info."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetInfo} for details."
-
                        res <- .Call("R_H5Aget_info", self$id, request_empty(1), PACKAGE="hdf5r")
                        if(res$return_val < 0) {
                            stop("Error retrieving attribute info")
@@ -45,9 +80,6 @@ H5A <- R6Class("H5A",
                        return(res$ainfo)
                    },
                    attr_name=function() {
-                       "This function implements the HDF5-API function H5Aget_name."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetName} for details."
-
                        ## get size of the name
                        name_size <- .Call("R_H5Aget_name", self$id, 0, character(0), PACKAGE="hdf5r")$return_val
                        if(name_size < 0) {
@@ -65,9 +97,6 @@ H5A <- R6Class("H5A",
                        return(res$buf)
                    },
                    get_space=function() {
-                       "This function implements the HDF5-API function H5Aget_space."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetSpace} for details."
-
                        id <- .Call("R_H5Aget_space", self$id, PACKAGE="hdf5r")$return_val
                        if(id < 0) {
                            stop("Error retrieving attribute type")
@@ -75,9 +104,6 @@ H5A <- R6Class("H5A",
                        return(H5S$new(id=id))
                    },
                    get_type=function(native=TRUE) {
-                       "This function implements the HDF5-API function H5Aget_type."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetType} for details."
-
                        id <- .Call("R_H5Aget_type", self$id, PACKAGE="hdf5r")$return_val
                        if(id < 0) {
                            stop("Error retrieving attribute type")
@@ -96,17 +122,10 @@ H5A <- R6Class("H5A",
                        }
                    },
                    get_storage_size=function() {
-                       "This function implements the HDF5-API function H5Aget_storage_size."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetStorageSize} for details."
-
                        size <- .Call("R_H5Aget_storage_size", self$id, PACKAGE="hdf5r")$return_val
                        return(size)
                    },
                    read_low_level=function(buffer, mem_type, duplicate_buffer=FALSE) {
-                       "Only for advanced users. See documentation for \\code{read} instead."
-                       "This function implements the HDF5-API function H5Aread."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-Read} for details."
-
                        check_class(mem_type, "H5T")
                        res <- .Call("R_H5Aread", self$id, mem_type$id, buffer, duplicate_buffer, PACKAGE="hdf5r")
                        if(res$return_val < 0) {
@@ -115,9 +134,6 @@ H5A <- R6Class("H5A",
                        return(res$buffer)
                    },
                    read=function(flags=getOption("hdf5r.h5tor_default"), drop=TRUE) {
-                       "Reads the data of the attribute and returns it as an R-object"
-                       "@param flags Conversion rules for integer values. See also \\code{\\link{h5const}}"
-                       "@param drop Logical. Should dimensions of length 1 be dropped (R-default for arrays)"
                        mem_type <- self$get_type()
 
                        check_class(mem_type, "H5T")
@@ -164,10 +180,6 @@ H5A <- R6Class("H5A",
                        return(buffer_post)
                    },
                    write_low_level=function(buffer, mem_type) {
-                       "Only for advanced users. See documentation for \\code{write} instead."
-                       "This function implements the HDF5-API function H5Awrite."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-Write} for details."
-
                        check_class(mem_type, "H5T")
                        res <- .Call("R_H5Awrite", self$id, mem_type$id, buffer, PACKAGE="hdf5r")
                        if(res$return_val < 0) {
@@ -176,10 +188,6 @@ H5A <- R6Class("H5A",
                        return(invisible(self))
                    },
                    write=function(robj, mem_type=NULL, flush=getOption("hdf5r.flush_on_write")) {
-                       "Writes the data of \\code{robj} to the attribute"
-                       "@param robj The object to write into the attribute"
-                       "@param mem_type The memory data type to use when transferring from HDF5 to intermediate storage. This is an "
-                       "advanced development feature and may be removed in the future."
                        if(is.null(mem_type)) {
                            mem_type <- self$get_type()
                        }
@@ -214,9 +222,6 @@ H5A <- R6Class("H5A",
                        return(invisible(self))
                    },
                    print=function(...){
-                       "Prints information for the dataset"
-                       "@param ... ignored"
-
                        is_valid <- self$is_valid
                        
                        print_class_id(self, is_valid)

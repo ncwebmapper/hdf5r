@@ -1,7 +1,7 @@
 ---
 title: "Introduction to the hdf5r package"
-author: "Holger Hoefling"
-date: April 17th 2016
+author: "Holger Hoefling and Mario Annau"
+date: October 1st 2017
 abstract: >
   Overview on how to use the simple as well as advanced facilities of HDF5 using the **hdf5r** package
 output: 
@@ -23,11 +23,6 @@ vignette: >
 knitr::opts_chunk$set(fig.width=7, fig.height=7, tidy=TRUE, results="hold")
 ```
 
-
-
-
-
-
 -----------------------------------------------------
 
 # Introduction
@@ -37,8 +32,15 @@ knitr::opts_chunk$set(fig.width=7, fig.height=7, tidy=TRUE, results="hold")
   efficient I/O and for high volume and complex data.
 
 As R is very often used to process large amounts of data, having a direct interface to HDF5 is very useful.
+
+
 As of the writing of this vignette, there are 2 other packages available that also implement an interface to HDF5, 
-**h5** on CRAN and **rhdf5** on Bioconductor. These are also good implementations, but there are several points that
+**h5** on CRAN and **rhdf5** on Bioconductor. 
+
+
+
+
+These are also good implementations, but there are several points that
 make this package here -- **hdf5r** -- stand out:
 
 - User friendly interface that allows access to datasets in the same fashion a user would access regular R arrays
@@ -50,7 +52,7 @@ make this package here -- **hdf5r** -- stand out:
 - All HDF5 functions that return constants do this in the format of an *extended-factor-variable*, giving the
   constants value as well as the name. Furthermore, all functions that in HDF5 return *C-structs*, return a data frame
   with the same variable names as in the structs (usually used by the various "-info" functions).
-- Tracking and closing of unused HDF5 resources is done completely automatically using the R garbage collector.
+- Tracking and closing of unused HDF5 resources is done automatically using the R garbage collector.
 
 If you want to follow along with the code without having to copy/paste, the R-code can be found using the command
 ```{r, eval=FALSE}

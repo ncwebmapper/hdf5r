@@ -17,15 +17,15 @@
 #############################################################################
 
 
-##' Extract HDF5-ids and return as a vector
-##'
-##' Internal helper function. Given a list of id-type-objects, it extracts the
-##' ids itself and returns them as a vector
-##' @title Extract HDF5-ids and return as a vector
-##' @param dtype_ids Ids itself or class objects to extract the ids from. 
-##' @return The ids as a integer64-vector
-##' @author Holger Hoefling
-##' @importFrom bit64 as.integer64
+#' Extract HDF5-ids and return as a vector
+#'
+#' Internal helper function. Given a list of id-type-objects, it extracts the
+#' ids itself and returns them as a vector
+#' @title Extract HDF5-ids and return as a vector
+#' @param dtype_ids Ids itself or class objects to extract the ids from. 
+#' @return The ids as a integer64-vector
+#' @author Holger Hoefling
+#' @importFrom bit64 as.integer64
 H5T_extractID <- function(dtype_ids) {
     if(inherits(dtype_ids, "H5T")) {
         dtype_ids_out <- dtype_ids$id
@@ -53,17 +53,17 @@ H5T_extractID <- function(dtype_ids) {
 }
 
 
-##' Turn ids into  \\code{\\link{H5T-class}} objects
-##'
-##' Gets the HDF5 internal class for an id and dispactches them so that the correct
-##' R6-classes are being created.
-##' @title Turn ids into  \\code{\\link{H5T-class}} objects
-##' @param ids The ids to return as objects
-##' @param do_copy Should the ids be copied using HDF5s internal copy mechanism
-##' @return An object of type R6 class \\code{\\link{H5T-class}}
-##' @author Holger Hoefling
-##' @importFrom bit64 as.integer64
-##' @export
+#' Turn ids into  \\code{\\link{H5T-class}} objects
+#'
+#' Gets the HDF5 internal class for an id and dispactches them so that the correct
+#' R6-classes are being created.
+#' @title Turn ids into  \\code{\\link{H5T-class}} objects
+#' @param ids The ids to return as objects
+#' @param do_copy Should the ids be copied using HDF5s internal copy mechanism
+#' @return An object of type R6 class \\code{\\link{H5T-class}}
+#' @author Holger Hoefling
+#' @importFrom bit64 as.integer64
+#' @export
 H5T_factory <- function(ids, do_copy=FALSE) {
     if(!missing(ids)) {
         ids <- H5T_extractID(ids)
@@ -124,15 +124,15 @@ H5T_factory <- function(ids, do_copy=FALSE) {
     }
 }
 
-##' Convert a text description to a datatype
-##'
-##' Converts a text to a datatype using the HDF5 function H5LT_text_to_dtype. Documentation can be found at 
-##' \url{https://www.hdfgroup.org/HDF5/doc/HL/RM_H5LT.html#H5LTtext_to_dtype}.
-##' @title Convert a text description to a datatype
-##' @param text The text to convert to the datatype
-##' @param lang_type The type of language to use; currently only \code{H5LT_DDL} is supported.
-##' @return A datatype corresponding to the text with the appropriate class inheriting from \code{\link{H5T-class}}.
-##' @author Holger Hoefling 
+#' Convert a text description to a datatype
+#'
+#' Converts a text to a datatype using the HDF5 function H5LT_text_to_dtype. Documentation can be found at 
+#' \url{https://www.hdfgroup.org/HDF5/doc/HL/RM_H5LT.html#H5LTtext_to_dtype}.
+#' @title Convert a text description to a datatype
+#' @param text The text to convert to the datatype
+#' @param lang_type The type of language to use; currently only \code{H5LT_DDL} is supported.
+#' @return A datatype corresponding to the text with the appropriate class inheriting from \code{\link{H5T-class}}.
+#' @author Holger Hoefling 
 text_to_dtype <- function(text, lang_type=h5const$H5LT_DDL) {
     id <- .Call("R_H5LTtext_to_dtype", paste(as.character(text), collapse = "\n"), h5const$H5LT_DDL, PACKAGE = "hdf5r")$return_val
     if(id < 0) {
@@ -159,11 +159,15 @@ text_to_dtype <- function(text, lang_type=h5const$H5LT_DDL) {
 #' \item{Variable Length}{\code{\link{H5T_VLEN-class}}}
 #' }
 #' @docType class
+#' @name H5T
+#' @rdname H5T-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link{H5T}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview
+NULL
+
+#' @export
 H5T <- R6Class("H5T",
                inherit=H5RefClass,
                public=list(
@@ -412,12 +416,16 @@ standalone_H5T_dtype_to_text <- function(h5t_id, lang_type) {
 #'
 #' Inherits from class \code{\link[=H5T-class]{H5T}}.
 #' @docType class
+#' @name H5T_INTEGER
+#' @rdname H5T_INTEGER-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5T_INTEGER-class]{H5T_INTEGER}}.
-#' @export
 #' @aliases H5T_BITFIELD H5T_BITFIELD-class
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5T-class]{H5T}}
+NULL
+
+#' @export
 H5T_INTEGER <- R6Class("H5T_INTEGER",
                        inherit=H5T,
                        public=list(
@@ -456,11 +464,15 @@ H5T_BITFIELD <- H5T_INTEGER
 #'
 #' Inherits from class \code{\link[=H5T-class]{H5T}}.
 #' @docType class
+#' @name H5T_FLOAT
+#' @rdname H5T_FLOAT-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5T_FLOAT-class]{H5T_FLOAT}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5T-class]{H5T}}
+NULL
+
+#' @export
 H5T_FLOAT <- R6Class("H5T_FLOAT",
                        inherit=H5T,
                        public=list(
@@ -557,12 +569,16 @@ H5T_FLOAT <- R6Class("H5T_FLOAT",
 #'
 #' Inherits from class \code{\link[=H5T-class]{H5T}}.
 #' @docType class
+#' @name H5T_ENUM
+#' @rdname H5T_ENUM-class
 #' @importFrom R6 R6Class
 #' @importFrom utils compareVersion
 #' @return Object of class \code{\link[=H5T_ENUM-class]{H5T_ENUM}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5T-class]{H5T}}
+NULL
+
+#' @export
 H5T_ENUM <- R6Class("H5T_ENUM",
                     inherit=H5T_INTEGER,
                     public=list(
@@ -672,11 +688,15 @@ H5T_ENUM <- R6Class("H5T_ENUM",
 #'
 #' Inherits from class \code{\link[=H5T-class]{H5T}}.
 #' @docType class
+#' @name H5T_LOGICAL
+#' @rdname H5T_LOGICAL-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5T_LOGICAL-class]{H5T_LOGICAL}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5T-class]{H5T}}, \code{\link[=H5T_ENUM-class]{H5T_ENUM}}
+NULL
+
+#' @export
 H5T_LOGICAL <-  R6Class("H5T_LOGICAL",
                     inherit=H5T_ENUM,
                     public=list(
@@ -720,11 +740,15 @@ H5T_LOGICAL <-  R6Class("H5T_LOGICAL",
 #'
 #' Inherits from class \code{\link[=H5T-class]{H5T}}.
 #' @docType class
+#' @name H5T_COMPOUND
+#' @rdname H5T_COMPOUND-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5T_COMPOUND-class]{H5T_COMPOUND}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5T-class]{H5T}}
+NULL
+
+#' @export
 H5T_COMPOUND <- R6Class("H5T_COMPOUND",
                         inherit=H5T,
                         public=list(
@@ -801,11 +825,15 @@ H5T_COMPOUND <- R6Class("H5T_COMPOUND",
 #'
 #' Inherits from class \code{\link[=H5T-class]{H5T}}.
 #' @docType class
+#' @name H5T_STRING
+#' @rdname H5T_STRING-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5T_STRING-class]{H5T_STRING}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5T-class]{H5T}}
+NULL
+
+#' @export
 H5T_STRING <- R6Class("H5T_STRING",
                       inherit=H5T,
                       public=list(
@@ -911,11 +939,15 @@ H5T_STRING <- R6Class("H5T_STRING",
 #' \code{Imaginary}.
 #' Inherits from class \code{\link[=H5T_COMPOUND-class]{H5T_COMPOUND}}.
 #' @docType class
+#' @name H5T_COMPLEX
+#' @rdname H5T_COMPLEX-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5T_COMPLEX-class]{H5T_COMPLEX}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5T-class]{H5T}}, \code{\link[=H5T_COMPOUND-class]{H5T_COMPOUND}}
+NULL
+
+#' @export
 H5T_COMPLEX <- R6Class("H5T_COMPLEX",
                        inherit=H5T_COMPOUND,
                        public=list(
@@ -940,11 +972,15 @@ H5T_COMPLEX <- R6Class("H5T_COMPLEX",
 #'
 #' Inherits from class \code{\link[=H5T-class]{H5T}}.
 #' @docType class
+#' @name H5T_ARRAY
+#' @rdname H5T_ARRAY-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5T_ARRAY-class]{H5T_ARRAY}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5T-class]{H5T}}
+NULL
+
+#' @export
 H5T_ARRAY <- R6Class("H5T_ARRAY",
                      inherit=H5T,
                      public=list(
@@ -1014,11 +1050,15 @@ H5T_ARRAY <- R6Class("H5T_ARRAY",
 #'
 #' Inherits from class \code{\link[=H5T-class]{H5T}}.
 #' @docType class
+#' @name H5T_VLEN
+#' @rdname H5T_VLEN-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5T_VLEN-class]{H5T_VLEN}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5T-class]{H5T}}
+NULL
+
+#' @export
 H5T_VLEN <- R6Class("H5T_VLEN",
                     inherit=H5T,
                     public=list(

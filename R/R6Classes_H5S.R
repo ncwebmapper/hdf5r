@@ -25,17 +25,21 @@
 
 
 
-##' Class for representing HDF5 spaces
-##' 
-##' This class represents an HDF5 space-id. It inherits all functions of the
-##' \code{\link{H5RefClass-class}}. 
-##'
-##' @docType class
-##' @importFrom R6 R6Class
-##' @return Object of class \code{\link{H5S}}. 
-##' @export
-##' @author Holger Hoefling
-##' @seealso H5Class_overview
+#' Class for representing HDF5 spaces
+#' 
+#' This class represents an HDF5 space-id. It inherits all functions of the
+#' \code{\link{H5RefClass-class}}. 
+#'
+#' @docType class
+#' @name H5S
+#' @rdname H5S-class
+#' @importFrom R6 R6Class
+#' @return Object of class \code{\link{H5S}}. 
+#' @author Holger Hoefling
+#' @seealso H5Class_overview
+NULL
+
+#' @export
 H5S <- R6Class("H5S",
                inherit=H5RefClass,
                public=list(
@@ -436,11 +440,14 @@ H5S$set("active", "rank", H5S$public_methods$get_simple_extent_ndims, overwrite=
 #' all functions that work for H5S-class objects will fail. It is likely better to implement this as a separate default class,
 #' avoid the id-tracking associated with it (which doesn't make sense anyway). Should find a better way to handle this.
 #' @docType class
+#' @name H5S_DEFAULT
+#' @rdname H5S_DEFAULT-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5S_DEFAULT-class]{H5S_DEFAULT}}. 
 #' @author Holger Hoefling
-#' @export
 #' @seealso H5Class_overview, \code{\link[=H5S-class]{H5S}}
+
+#' @export
 H5S_DEFAULT <- R6Class("H5S_DEFAULT",
                        inherit=H5S,
                        public=list(
@@ -551,16 +558,16 @@ standalone_H5S_select_hyperslab <- function(id, start, count, stride=NULL, block
 
 
 
-##' Select multiple hyperslabs in a space
-##'
-##' Selects multiple hyperslabs in a space. Before the selection, the space selection will be cleared.
-##' @title Select multiple hyperslabs in a space
-##' @param id The id of the space
-##' @param hyperslab_array The array with the hyperslabs. Is of dimension num_dim x num_hyperslabs x 4. With teh elements
-##' being start, count, stride and block
-##' @return \code{NULL}. The space has been manipulated as a side effect
-##' @author Holger Hoefling
-##' @keywords internal
+#' Select multiple hyperslabs in a space
+#'
+#' Selects multiple hyperslabs in a space. Before the selection, the space selection will be cleared.
+#' @title Select multiple hyperslabs in a space
+#' @param id The id of the space
+#' @param hyperslab_array The array with the hyperslabs. Is of dimension num_dim x num_hyperslabs x 4. With teh elements
+#' being start, count, stride and block
+#' @return \code{NULL}. The space has been manipulated as a side effect
+#' @author Holger Hoefling
+#' @keywords internal
 standalone_H5S_select_multiple_hyperslab <- function(id, hyperslab_array) {
     num_hyperslabs <- dim(hyperslab_array)[[2]]
 

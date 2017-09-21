@@ -5,36 +5,39 @@
 |**ASAN, valgrind**|[Wercker](http://www.wercker.com)|[![wercker status](https://app.wercker.com/status/6a30e9d63b5d38539e28505b2fe6c440/s/master "wercker status")](https://app.wercker.com/project/byKey/6a30e9d63b5d38539e28505b2fe6c440)|
 |**Code Coverage**|[Codecov](https://codecov.io/)|[![codecov.io](http://codecov.io/github/hhoeflin/hdf5r/coverage.svg?branch=master)](http://codecov.io/github/hhoeflin/hdf5r?branch=master)|
 
-**hdf5r** is an R interface to the [HDF5](https://www.hdfgroup.org/HDF5) library. It is implemented using [R6](https://CRAN.R-project.org/package=R6) classes based on the [HDF5-C-API](https://support.hdfgroup.org/HDF5/doc/RM/RM_H5Front.html). The package supports all data-types as specified by HDF5 (including references) and provides many convenience functions yet also an extensive selection of the native HDF5-C-API functions. **hdf5r** is available on [Github](https://github.com/hhoeflin/hdf5r) and has already been released on [CRAN](https://cran.r-project.org/web/packages/hdf5r/index.html) for all major platforms (Windows, OS X, Linux). It is also 
+**hdf5r** is an R interface to the [HDF5](HDF5) library. [HDF5](HDF5) is an excellent library and data model to store huge amounts of data in a binary, programming language and platform independent file format. Compared to R's integrated [*save()*](MAN-SAVE) and [*load()*](MAN-LOAD) functions it also supports access to only parts of the binary data files and thus can be used to process data not fitting into memory.
+
+The **hdf5r** package is implemented using [R6](R6-CRAN) classes based on the [HDF5-C-API](HDF5-C-API). The package supports all data-types as specified by HDF5 (including references) and provides many convenience functions yet also an extensive selection of the native HDF5-C-API functions. **hdf5r** is available on [Github](HDF5R-GITHUB) and has already been released on [CRAN](HDF5R-CRAN) for all major platforms (Windows, OS X, Linux). It is also 
 tested using several hundred assertions.
 
-[HDF5](https://www.hdfgroup.org/HDF5/) is an excellent library and data model to 
-store huge amounts of data in a binary file format. Supporting most major 
-platforms and programming languages it can be used to exchange data files in a 
-language independent format. Compared to R's integrated *save()* and *load()* 
-functions it also supports access to only parts of the binary data files and can
-therefore be used to process data not fitting into memory.
+[HDF5R-CRAN]: https://cran.r-project.org/web/packages/hdf5r/index.html
+[HDF5R-GITHUB]: https://github.com/hhoeflin/hdf5r
+[HDF5-C-API]: https://support.hdfgroup.org/HDF5/doc/RM/RM_H5Front.html
+[R6-CRAN]: https://CRAN.R-project.org/package=R6
+[MAN-SAVE]: http://stat.ethz.ch/R-manual/R-devel/library/base/html/save.html
+[MAN-LOAD]: http://stat.ethz.ch/R-manual/R-devel/library/base/html/load.html
 
 # Install
 
 **hdf5r** is available for all major platforms, namely Linux, OS X and Windows. 
-The package is compatible with HDf5 version 1.8.13 or higher (also Version 1.10.0). 
+The package is compatible with [HDF5](HDF5) version 1.8.13 or higher (also Version 1.10.0). 
 
 ## Requirements
-
 For OS X and Linux the HDF5 library needs to be installed via one of the (shell) commands specified below:
 
-| System                                    | Command
+| System                                    | Shell Command
 |:------------------------------------------|:---------------------------------|
 |**OS X (using Homebrew)**                  | `brew install hdf5`
 |**Debian-based systems (including Ubuntu)**| `sudo apt-get install libhdf5-dev` 
 |**Systems supporting yum and RPMs**        | `sudo yum install hdf5-devel`
+|**All - from source**                      | See [INSTALL](HDF5-INSTALL)
 
 HDF5 1.8.14 has been pre-compiled for Windows and is available at https://github.com/mannau/h5-libwin - thus no manual installation is required.
 
-## Basic Install
+[HDF5-INSTALL]: https://support.hdfgroup.org/ftp/HDF5/current/src/unpacked/release_docs/INSTALL
 
-The latest release version of **hdf5r** can be installed from any CRAN [Mirror](https://cran.r-project.org/mirrors.html) using the R command
+## Basic Install
+The latest release version of **hdf5r** can be installed from any CRAN [Mirror](CRAN-MIRRORS) using the R command
 ```r
 install.packages("hdf5r")
 ```
@@ -43,27 +46,59 @@ For the latest development version from Github you can use
 devtools::install_github("hhoeflin/hdf5r")
 ```
 
-## Custom INSTALL Parameters
-If the hdf5 library is not located in a standard directory recognized by the configure script the parameters CPPFLAGS and LIBS may need to be set manually. 
-This can be done using the --configure-vars option for R CMD INSTALL in the command line, e.g
+[CRAN-MIRRORS]: https://cran.r-project.org/mirrors.html
+
+## Custom Parameters
+If the HDF5 library is not located in a standard directory recognized by the configure script the parameters `CPPFLAGS` and `LIBS` may need to be set manually. This can be done using the `--configure-vars` option for `R CMD INSTALL` in the command line, e.g
 ```shell
 R CMD INSTALL hdf5r_<version>.tar.gz --configure-vars='LIBS=<LIBS> CPPFLAGS=<CPPFLAGS>'
 ```
-
 The most recent version with required paramters can also be directly installed from github using **devtools** in R:
 ```r
 devtools::install_github("mannau/h5", args = "--configure-vars='LIBS=<LIBS> CPPFLAGS=<CPPFLAGS>'")
 ```
-
-A concrete OS X example setting could look like this:
+An OS X example setting could look like this:
 ```shell
-R CMD check hdf5r_0.9.7.9000.tar.gz --configure-vars="LIBS='-L/usr/local/Cellar/hdf5/1.10.0/lib  -L. -lhdf5_cpp -lhdf5 -lz -lm' CPPFLAGS='-I/usr/local/include'"
+R CMD INSTALL hdf5r_0.9.7.9000.tar.gz --configure-vars="LIBS='-L/usr/local/Cellar/hdf5/1.10.0/lib  -L. -lhdf5_cpp -lhdf5 -lz -lm' CPPFLAGS='-I/usr/local/include'"
 ```
 
 # Getting Started
 
-## How to Get Help
+Here is a very brief code example to create a file, write some data and read it back again.
+```r
+test_file <- tempfile(fileext=".h5")
+file.h5 <- H5File$new(test_file, mode="w")
 
+data(cars)
+file.h5$create_group("test")
+file.h5[["test/cars"]] <- cars
+cars_ds <- file.h5[["test/cars"]]
+h5attr(cars_ds, "rownames") <- rownames(cars)
+cars_ds
+
+## Close the file at the end
+## the 'close' method closes only the file-id, but leaves object inside the file open
+## This may prevent re-opening of the file. 'close_all' closes the file and all objects in it
+file.h5$close_all()
+```
+
+```r
+## now re-open it 
+file.h5 <- H5File$new(test_file, mode="r+")
+
+## lets look at the content
+file.h5$ls(recursive=TRUE)
+
+cars_ds <- file.h5[["test/cars"]]
+## note that for now tables in HDF5 are 1-dimensional, not 2-dimensional
+mycars <- cars_ds[]
+h5attr_names(cars_ds)
+h5attr(cars_ds, "rownames")
+
+file.h5$close_all()
+```
+
+## How to Get Help
 The package provides most of the regular HDF5-API in addition to a number of convenience functions. As such, the number of available methods is 
 quite large. As the package uses R6 classes, all applicable methods for a class are contained in that class. The easiest way to get an 
 overview of the available methods is to call the *methods* method. 
@@ -101,43 +136,7 @@ vignette("hdf5r", package="hdf5r")
 ```
 
 
-## Simple Code Example
 
-If you don't have time to read the vignette, which contains more code example, here is a very brief code example to 
-create a file, write some data and read it back again.
-
-```r
-test_file <- tempfile(fileext=".h5")
-file.h5 <- H5File$new(test_file, mode="w")
-
-data(cars)
-file.h5$create_group("test")
-file.h5[["test/cars"]] <- cars
-cars_ds <- file.h5[["test/cars"]]
-h5attr(cars_ds, "rownames") <- rownames(cars)
-
-## Close the file at the end
-## the 'close' method closes only the file-id, but leaves object inside the file open
-## This may prevent re-opening of the file. 'close_all' closes the file and all objects in it
-file.h5$close_all()
-```
-
-
-```r
-## now re-open it 
-file.h5 <- H5File$new(test_file, mode="r+")
-
-## lets look at the content
-file.h5$ls(recursive=TRUE)
-
-cars_ds <- file.h5[["test/cars"]]
-## note that for now tables in HDF5 are 1-dimensional, not 2-dimensional
-mycars <- cars_ds[]
-h5attr_names(cars_ds)
-h5attr(cars_ds, "rownames")
-
-file.h5$close_all()
-```
 
 # 64-bit Integers
 
@@ -169,3 +168,5 @@ limitations under the License.
 The licensing terms of HDF5 can as of this writing be found in the inst/HDF5_COPYRIGHTS file or online at
 
 https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.0/src/unpacked/COPYING
+
+[HDF5]: https://www.hdfgroup.org/HDF5

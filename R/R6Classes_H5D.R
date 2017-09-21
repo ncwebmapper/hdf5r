@@ -2,53 +2,151 @@
 
 #############################################################################
 ##
-## Copyright 2016 Novartis Institutes for BioMedical Research Inc.
-## Licensed under the Apache License, Version 2.0 (the "License");
-## you may not use this file except in compliance with the License.
-## You may obtain a copy of the License at
+##Copyright 2016 Novartis Institutes for BioMedical Research Inc. Licensed under
+##the Apache License, Version 2.0 (the "License"); you may not use this file
+##except in compliance with the License. You may obtain a copy of the License at
 ##
-## http://www.apache.org/licenses/LICENSE-2.0
+##http://www.apache.org/licenses/LICENSE-2.0
 ##
-## Unless required by applicable law or agreed to in writing, software
-## distributed under the License is distributed on an "AS IS" BASIS,
-## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-## See the License for the specific language governing permissions and
-## limitations under the License.
+##Unless required by applicable law or agreed to in writing, software 
+##distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+##WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+##License for the specific language governing permissions and limitations under
+##the License.
 ##
 #############################################################################
 
 
 
-setOldClass("H5R")
+setOldClass("H5D")
 
 
-##' Class for representing HDF5 datasets
-##'
-##' This class represents an HDF5 group-id. It inherits all functions of the
-##' \code{\link{H5RefClass-class}}.
-##'
-##' @docType class
-##' @importFrom R6 R6Class
-##' @return Object of class \code{\link{H5D}}.
-##' @export
-##' @author Holger Hoefling
-##' @seealso H5Class_overview
+#' Class for representing HDF5 datasets
+#'
+#' This class represents an HDF5 group-id. It inherits all functions of the
+#' \code{\link{H5RefClass-class}}.
+#'
+#' @docType class
+#' @name H5D
+#' @rdname H5D-class
+#' @importFrom R6 R6Class
+#' @return Object of class \code{\link{H5D}}.
+#' @author Holger Hoefling
+#' 
+#' @template commonFGDTA
+#' @template commonFGDT
+#' 
+#' @section Methods:
+#'   \describe{
+#'   \item{\code{new(id = NULL)}}{Intializes a new dataset-object. Only for internal use. Use the \code{create_dataset} function for \code{\link{H5Group}}and \code{\link{H5File}} objects
+#'     \strong{Parameters:}
+#'       \describe{
+#'         \item{id}{For internal use only}
+#'       }
+#'     }
+#'   \item{\code{get_space()}}{This function implements the HDF5-API function H5Dget_space. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetSpace} for details.}
+#'   \item{\code{get_space_status()}}{This function implements the HDF5-API function H5Dget_space_status. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetSpaceStatus} for details.}
+#'   \item{\code{get_type(native = TRUE)}}{This function implements the HDF5-API function H5Dget_type. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetType} for details.}
+#'   \item{\code{get_create_plist()}}{This function implements the HDF5-API function H5Dget_create_plist. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetCreatePlist} for details.}
+#'   \item{\code{get_access_plist()}}{This function implements the HDF5-API function H5Dget_access_plist. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetAccessPlist} for details.}
+#'   \item{\code{get_offset()}}{This function implements the HDF5-API function H5Dget_offset. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetOffset} for details.}
+#'   \item{\code{get_storage_size()}}{This function implements the HDF5-API function H5Dget_storage_size. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetStorageSize} for details.}
+#'   \item{\code{vlen_get_buf_size(type, space)}}{This function implements the HDF5-API function H5Dvlen_get_buf_size. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-VlenGetBufSize} for details.}
+#'   \item{\code{vlen_reclaim(buffer, type, space, dataset_xfer_pl = h5const$H5P_DEFAULT)}}{This function implements the HDF5-API function H5Dvlen_reclaim. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-VlenReclaim} for details.}
+#'   \item{\code{read_low_level(file_space = h5const$H5S_ALL, mem_space = NULL,mem_type = NULL, dataset_xfer_pl = h5const$H5P_DEFAULT, flags = getOption("hdf5r.h5tor_default"), set_dim = FALSE, dim_to_set = NULL, drop = TRUE)}}{
+#'     This function is for advanced users. It is recommended to use \code{read} instead or the \code{[} interface.
+#'     This function implements the HDF5-API function H5Dread, with minor changes to the API to accomodate R.
+#'     Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-Read} for details.
+#'     It reads the data in the dataset as specified by \code{mem_space} and return it as an R-obj
+#'     \strong{Parameters:}
+#'       \describe{
+#'         \item{file_space}{An HDF5-space, represented as class \code{\link{H5S-class}} that determines which part of the dataset is being read. Can also be given as an id}
+#'         \item{mem_space}{The space as it is represented in memory; advanced feature; may be removed in the future. Can also be given as an id.}
+#'         \item{mem_type}{Memory type; extracted from the dataset if null (can be passed in for efficiency reasons. Can also be given as an id.}
+#'         \item{dataset_xfer_pl}{Dataset transfer property list. See \code{\link{H5P_DATASET_XFER-class}}}
+#'         \item{flags}{Conversion rules for integer values. See also \code{\link{h5const}}}
+#'         \item{set_dim}{If \code{TRUE}, the dimension attribute is set in the return value. How it is set is determined by \code{dim_to_set}.}
+#'         \item{dim_to_set}{The dimension to set; Has to be numeric and needs to be specified if \code{set_dim} is \code{TRUE}. If the result is a data.frame, i.e. the data-type is a compound, then the dimension is ignored as the correct dimension is already set.}
+#'         \item{drop}{Logical. Should dimensions of length 1 be dropped (R-default for arrays)}
+#'       }
+#'     }
+#'   \item{\code{read(args = NULL, dataset_xfer_pl = h5const$H5P_DEFAULT, flags = getOption("hdf5r.h5tor_default"), drop = TRUE, envir = parent.frame())}}{
+#'     Main interface for reading data from the dataset. It is the function that is used by \code{[}, where all indices are being passed in the parameter \code{args}.
+#'     \strong{Parameters:}
+#'       \describe{
+#'         \item{args}{The indices for each dimension to subset given as a list. This makes this easier to use as a programmatic API. For interactive use we recomment the use of the \code{[} operator. If set to \code{NULL}, the entire dataset will be read.}
+#'         \item{envir}{The environment in which to evaluate \code{args}}
+#'         \item{dataset_xfer_pl}{An object of class \code{\link{H5P_DATASET_XFER-class}}.}
+#'         \item{flags}{Some flags governing edge cases of conversion from HDF5 to R. This is related to how integers are being treated and the issue of R not being able to natively represent 64bit integers and not at all being able to represent unsigned 64bit integers (even using add-on packages). The constants governing this are part of \code{\link{h5const}}. The relevant ones start with the term \code{H5TOR} and are documented there. The default set here returns a regular 32bit integer if it doesn't lead to an overflow and returns a 64bit integer from the \code{bit64} package otherwise. For 64bit unsigned int that are larger than 64bit signed int, it return a \code{double}. This looses precision, however.}
+#'         \item{drop}{Logical. When reading data, should dimensions of size 1 be dropped.}
+#'       }
+#'      \strong{Return:} The data that was read as an R object
+#'    }
+#'  \item{\code{write_low_level(robj, file_space = h5const$H5S_ALL, mem_space = NULL, mem_type = NULL, dataset_xfer_pl = h5const$H5P_DEFAULT, flush = getOption("hdf5r.flush_on_write"))}}{
+#'    This function is for advanced users. It is recommended to use \code{read} instead or the \code{[<-} interface as used for arrays. This function implements the HDF5-API function H5Dwrite, with some changes to accomodate R. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-Write} for details. It writes that data from the \code{robj} into the dataset.
+#'    \strong{Parameters:}
+#'      \describe{
+#'        \item{robj}{The object to write into the dataset}
+#'        \item{mem_space}{The space as it is represented in memory; advanced feature; may be removed in the future}
+#'        \item{mem_type}{Memory type; extracted from the dataset if null (can be passed in for efficiency reasons}
+#'        \item{file_space}{An HDF5-space, represented as class \code{\link{H5S-class}} that determines which part of the dataset is being written.}
+#'        \item{dataset_xfer_pl}{Dataset transfer property list. See \code{\link{H5P_DATASET_XFER-class}}}
+#'        \item{flush}{Should a flush be done after the write}
+#'      }
+#'  }
+#'  \item{\code{write(args, value, dataset_xfer_pl = h5const$H5P_DEFAULT, envir = parent.frame())}}{
+#'    Main interface for writing data to the dataset. It is the function that is used by \code{[<-}, where all indices are being passed in the parameter \code{args}.
+#'    \strong{Parameters:}
+#'      \describe{
+#'        \item{args}{The indices for each dimension to subset given as a list. This makes this easier to use as a programmatic API. For interactive use we recomment the use of the \code{[} operator. If set to \code{NULL}, the entire dataset will be read.}
+#'        \item{value}{The data to write to the dataset}
+#'        \item{envir}{The environment in which to evaluate \code{args}}
+#'        \item{dataset_xfer_pl}{An object of class \code{\link{H5P_DATASET_XFER-class}}.}
+#'      }
+#'      \strong{Return:} The HDF5 dataset object, returned invisibly
+#'  }
+#'  \item{\code{set_extent(dims)}}{This function implements the HDF5-API function H5Dset_extent. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-SetExtent} for details.}
+#'  \item{\code{get_fill_value()}}{This function implements the HDF5-API function H5Pget_fill_value, automatically supplying the datatype of the dataset for convenience. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetFillValue} for details.}
+#'  \item{\code{reorder(reorder_dim, start, end, new_order, max_mem, dataset_xfer_pl = h5const$H5P_DEFAULT, key_info = NULL)}}{
+#'    Reorder a subset of an HDF5 dataset along a specific dimension. It is mostly intended as a function to be used by a sorting algorithm and is not checked for correct inputs. Incorrect use can corrupt a dataset
+#'    \strong{Parameters:}
+#'      \describe{
+#'        \item{reorder_dim}{The number of the dimension along which the reordering should occur.}
+#'        \item{start,end}{The start and end index where the reordering should occur (can be vectors of equal length)}
+#'        \item{new_order}{The new ordering of the items to re-order. The ith item gives the index in the source for the i-th item in the destination (for the \code{reorder_dim})}
+#'        \item{max_mem}{Memory usage of the function in bytes (a rough guide, can be somewhat exceeded)}
+#'        \item{dataset_xfer_pl}{The dataset transfer propery list}
+#'        \item{key_info}{The key_info returned by the \code{key_info} method of the dataset}
+#'      }
+#'    }
+#'  \item{\code{create_reference(...)}}{This function implements the HDF5-API function H5Rcreate. The parameters are interpreted as in '['. The function always create \code{H5R_DATASET_REGION} references. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5R.html#Reference-Create} for details.}
+#'  \item{\code{print(..., max.attributes)}}{Prints information for the dataset
+#'    \strong{Parameters:}
+#'      \describe{
+#'        \item{...}{ignored}
+#'        \item{max.attributes}{Maximum number of attribute names to print}
+#'      }
+#'  }
+#'  \item{\code{flush(scope = h5const$H5F_SCOPE_GLOBAL)}}{This function implements the HDF5-API function H5Fflush. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5F.html#File-Flush} for details.}
+#'  \item{\code{get_filename()}}{This function implements the HDF5-API function H5Fget_name. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5F.html#File-GetName} for details.}
+#'  \item{\code{dims()}}{Get the dimension of the dataset}
+#'  \item{\code{maxdims()}}{Get the maximal dimension of the dataset}
+#'  \item{\code{chunk_dims()}}{Return the dimension of the chunks. NA if the dataset is not chunked}
+#'  \item{\code{key_info()}}{Returns the key types as a list, consisting of type, space, dataset_create_pl, type_size_raw, type_size_variable, dims and chunk_dims. type_size_raw versus variable differs for variable length types, which return \code{Inf} for type_size_variable and the underlying size for type_size_raw}
+#' }
+NULL
+
+#' @export
 H5D <- R6Class("H5D",
                inherit=H5RefClass,
                public=list(
                    initialize=function(id=NULL) {
-                       "Intializes a new dataset-object. Only for internal use. Use the \\code{create_dataset} function for \\code{\\link{H5Group}}"
-                       "and \\code{\\link{H5File}} objects"
-                       "@param id For internal use only"
                        if(is.null(id)) {
                            stop("An id has to be provided for a dataset of class H5D. For creating a dataset, use 'create_dataset' for an H5File or H5Group")
                        }
                        super$initialize(id=id)
                    },
                    get_space=function() {
-                       "This function implements the HDF5-API function H5Dget_space."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetSpace} for details."
-
                        id <- .Call("R_H5Dget_space", self$id, PACKAGE="hdf5r")$return_val
                        if(id < 0) {
                            stop("Error retrieving dataspace")
@@ -56,9 +154,6 @@ H5D <- R6Class("H5D",
                        return(H5S$new(id=id))
                    },
                    get_space_status=function() {
-                       "This function implements the HDF5-API function H5Dget_space_status."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetSpaceStatus} for details."
-
                        res <- .Call("R_H5Dget_space_status", self$id, request_empty(1), PACKAGE="hdf5r")
                        if(res$return_val < 0) {
                            stop("Error retrieving space status")
@@ -66,16 +161,10 @@ H5D <- R6Class("H5D",
                        return(res$allocation)
                    },
                    get_type=function(native=TRUE) {
-                       "This function implements the HDF5-API function H5Dget_type."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetType} for details."
-
                        id <- standalone_H5D_get_type(h5d_id=self$id, native=native) 
                        return(H5T_factory(id))
                    },
                    get_create_plist=function() {
-                       "This function implements the HDF5-API function H5Dget_create_plist."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetCreatePlist} for details."
-
                        id <- .Call("R_H5Dget_create_plist", self$id, PACKAGE="hdf5r")$return_val
                        if(id < 0) {
                            stop("Error retrieving dataset creation property list")
@@ -83,9 +172,6 @@ H5D <- R6Class("H5D",
                        return(H5P_DATASET_CREATE$new(id=id))
                    },
                    get_access_plist=function() {
-                       "This function implements the HDF5-API function H5Dget_access_plist."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetAccessPlist} for details."
-
                        id <- .Call("R_H5Dget_access_plist", self$id, PACKAGE="hdf5r")$return_val
                        if(id < 0) {
                            stop("Error retrieving dataset access property list")
@@ -93,9 +179,6 @@ H5D <- R6Class("H5D",
                        return(H5P_DATASET_ACCESS$new(id=id))
                    },
                    get_offset=function() {
-                       "This function implements the HDF5-API function H5Dget_offset."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetOffset} for details."
-
                        haddr <- .Call("R_H5Dget_offset", self$id, PACKAGE="hdf5r")$return_val
                        if(haddr < 0) {
                            stop("Error retrieving address; is undefined")
@@ -103,16 +186,10 @@ H5D <- R6Class("H5D",
                        return(haddr)
                    },
                    get_storage_size=function() {
-                       "This function implements the HDF5-API function H5Dget_storage_size."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-GetStorageSize} for details."
-
                        size <- .Call("R_H5Dget_storage_size", self$id, PACKAGE="hdf5r")$return_val
                        return(size)
                    },
                    vlen_get_buf_size=function(type, space) {
-                       "This function implements the HDF5-API function H5Dvlen_get_buf_size."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-VlenGetBufSize} for details."
-
                        check_class(type, "H5T")
                        check_class(space, "H5S")
 
@@ -123,9 +200,6 @@ H5D <- R6Class("H5D",
                        return(res$size)
                    },
                    vlen_reclaim=function(buffer, type, space, dataset_xfer_pl=h5const$H5P_DEFAULT) {
-                       "This function implements the HDF5-API function H5Dvlen_reclaim."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-VlenReclaim} for details."
-
                        check_class(type, "H5T")
                        check_class(space, "H5S")
 
@@ -138,25 +212,6 @@ H5D <- R6Class("H5D",
                    },
                    read_low_level=function(file_space=h5const$H5S_ALL, mem_space=NULL, mem_type=NULL,
                        dataset_xfer_pl=h5const$H5P_DEFAULT, flags=getOption("hdf5r.h5tor_default"), set_dim=FALSE, dim_to_set=NULL, drop=TRUE) {
-                       "This function is for advanced users. It is recommended to use \\code{read} instead or the \\code{[} interface."
-                       "This function implements the HDF5-API function H5Dread, with minor changes to the API to accomodate R."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-Read} for details."
-                       "It reads the data in the dataset as specified by \\code{mem_space} and return it as an R-obj"
-                       "@param file_space An HDF5-space, represented as class \\code{\\link{H5S-class}} that determines which part"
-                       "of the dataset is being read. Can also be given as an id"
-                       "@param mem_space The space as it is represented in memory; advanced feature; may be removed in the future."
-                       "Can also be given as an id."
-                       "@param mem_type Memory type; extracted from the dataset if null (can be passed in for efficiency reasons"
-                       "Can also be given as an id."
-                       "@param dataset_xfer_pl Dataset transfer property list. See \\code{\\link{H5P_DATASET_XFER-class}}"
-                       "@param flags Conversion rules for integer values. See also \\code{\\link{h5const}}"
-                       "@param set_dim If \\code{TRUE}, the dimension attribute is set in the return value. How it is set "
-                       "is determined by \\code{dim_to_set}."
-                       "@param dim_to_set The dimension to set; Has to be numeric and needs to be specified if \\code{set_dim} is \\code{TRUE}."
-                       "If the result is a data.frame, i.e. the data-type is a compound, then the dimension is ignored as the"
-                       "correct dimension is already set."
-                       "@param drop Logical. Should dimensions of length 1 be dropped (R-default for arrays)"
-
                        ## first ensure that file_space of the correct types and extract the id
                        if(!inherits(file_space, "H5S") && !(is.integer64(file_space) && length(file_space) == 1)) {
                            stop("file_space has to be an id or of type H5T")
@@ -254,21 +309,6 @@ H5D <- R6Class("H5D",
                        return(buffer_post)
                    },
                    read=function(args=NULL, dataset_xfer_pl=h5const$H5P_DEFAULT, flags=getOption("hdf5r.h5tor_default"), drop=TRUE, envir=parent.frame()) {
-                       "Main interface for reading data from the dataset. It is the function that is used by \\code{[}, where"
-                       "all indices are being passed in the parameter \\code{args}."
-                       "@param args The indices for each dimension to subset given as a list. This makes this easier to use as a programmatic API."
-                       "For interactive use we recomment the use of the \\code{[} operator. If set to \\code{NULL}, the entire dataset will be read."
-                       "@param envir The environment in which to evaluate \\code{args}"
-                       "@param dataset_xfer_pl An object of class \\code{\\link{H5P_DATASET_XFER-class}}." 
-                       "@param flags Some flags governing edge cases of conversion from HDF5 to R. This is related to how integers are being treated and"
-                       "the issue of R not being able to natively represent 64bit integers and not at all being able to represent unsigned 64bit integers"
-                       "(even using add-on packages). The constants governing this are part of \\code{\\link{h5const}}. The relevant ones start with the term"
-                       "\\code{H5TOR} and are documented there. The default set here returns a regular 32bit integer if it doesn't lead to an overflow"
-                       "and returns a 64bit integer from the \\code{bit64} package otherwise. For 64bit unsigned int that are larger than 64bit signed int,"
-                       "it return a \\code{double}. This looses precision, however."
-                       "@param drop Logical. When reading data, should dimensions of size 1 be dropped."
-                       "@return The data that was read as an R object"
-
                        self_space_id <- as.integer64(.Call("R_H5Dget_space", self$id, PACKAGE="hdf5r")$return_val)
                        on.exit(.Call("R_H5Sclose", self_space_id, PACKAGE = "hdf5r"), add=TRUE)
                        
@@ -330,19 +370,6 @@ H5D <- R6Class("H5D",
                    },
                    write_low_level=function(robj, file_space=h5const$H5S_ALL, mem_space=NULL, mem_type=NULL, dataset_xfer_pl=h5const$H5P_DEFAULT,
                        flush=getOption("hdf5r.flush_on_write")) {
-                       "This function is for advanced users. It is recommended to use \\code{read} instead or the \\code{[<-} interface"
-                       "as used for arrays."
-                       "This function implements the HDF5-API function H5Dwrite, with some changes to accomodate R."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-Write} for details."
-                       "It writes that data from the \\code{robj} into the dataset."
-                       "@param robj The object to write into the dataset"
-                       "@param mem_space The space as it is represented in memory; advanced feature; may be removed in the future"
-                       "@param mem_type Memory type; extracted from the dataset if null (can be passed in for efficiency reasons"
-                       "@param file_space An HDF5-space, represented as class \\code{\\link{H5S-class}} that determines which part"
-                       "of the dataset is being written."
-                       "@param dataset_xfer_pl Dataset transfer property list. See \\code{\\link{H5P_DATASET_XFER-class}}"
-                       "@param flush Should a flush be done after the write"
-
                        ## first ensure that file_space of the correct types and extract the id
                        if(!inherits(file_space, "H5S") && !(is.integer64(file_space) && length(file_space) == 1)) {
                            stop("file_space has to be an id or of type H5T")
@@ -416,16 +443,6 @@ H5D <- R6Class("H5D",
                        return(invisible(self))
                    },
                    write=function(args, value, dataset_xfer_pl=h5const$H5P_DEFAULT, envir=parent.frame()) {
-                       "Main interface for writing data to the dataset. It is the function that is used by \\code{[<-}, where"
-                       "all indices are being passed in the parameter \\code{args}."
-                       "@param args The indices for each dimension to subset given as a list. This makes this easier to use as a programmatic API."
-                       "For interactive use we recomment the use of the \\code{[} operator. If set to \\code{NULL}, the entire dataset will be read."
-                       "@param value The data to write to the dataset"
-                       "@param envir The environment in which to evaluate \\code{args}"
-                       "@param dataset_xfer_pl An object of class \\code{\\link{H5P_DATASET_XFER-class}}." 
-                       "@return The HDF5 dataset object, returned invisibly"
-
-                       
                        self_space_id <- as.integer64(.Call("R_H5Dget_space", self$id, PACKAGE="hdf5r")$return_val)
                        on.exit(.Call("R_H5Sclose", self_space_id, PACKAGE = "hdf5r"), add=TRUE)
                        
@@ -507,9 +524,6 @@ H5D <- R6Class("H5D",
                        }
                    },
                    set_extent=function(dims) {
-                       "This function implements the HDF5-API function H5Dset_extent."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-SetExtent} for details."
-
                        rank <- self$get_space()$get_simple_extent_ndims()
                        if(length(dims) != rank) {
                            stop(paste("Length of dims is", length(dims), "but has to be equal to the rank of the dataspace:", rank))
@@ -521,10 +535,6 @@ H5D <- R6Class("H5D",
                        return(invisible(self))
                    },
                    get_fill_value=function() {
-                       "This function implements the HDF5-API function H5Pget_fill_value, automatically"
-                       "supplying the datatype of the dataset for convenience."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetFillValue} for details."
-
                        dtype <- self$get_type()
                        create_plist <- self$get_create_plist()
                        value_h5 <- H5ToR_Pre(dtype, 1)
@@ -535,16 +545,6 @@ H5D <- R6Class("H5D",
                        return(H5ToR_Post(value_h5, dtype, 1, -1))
                    },
                    reorder=function(reorder_dim, start, end, new_order, max_mem, dataset_xfer_pl=h5const$H5P_DEFAULT, key_info=NULL) {
-                       "Reorder a subset of an HDF5 dataset along a specific dimension. It is mostly intended as a function to be"
-                       "used by a sorting algorithm and is not checked for correct inputs. Incorrect use can corrupt a dataset"
-                       "@param reorder_dim The number of the dimension along which the reordering should occur."
-                       "@param start,end The start and end index where the reordering should occur (can be vectors of equal length)"
-                       "@param new_order The new ordering of the items to re-order. The ith item gives the index in the source for the i-th item in"
-                       "the destination (for the \\code{reorder_dim})"
-                       "@param max_mem Memory usage of the function in bytes (a rough guide, can be somewhat exceeded)"
-                       "@param dataset_xfer_pl The dataset transfer propery list"
-                       "@param key_info The key_info returned by the \\code{key_info} method of the dataset"
-                       
                        check_pl(dataset_xfer_pl, "H5P_DATASET_XFER")
 
                        if(is.null(key_info)) {
@@ -763,10 +763,6 @@ H5D <- R6Class("H5D",
                        return(res)
                    },
                    key_info=function() {
-                       "Returns the key types as a list, consisting of type, space, dataset_create_pl,"
-                       "type_size_raw, type_size_variable, dims and chunk_dims."
-                       "type_size_raw versus variable differs for variable length types, which return \\code{Inf}"
-                       "for type_size_variable and the underlying size for type_size_raw"
                        ds_space <- self$get_space()
                        ds_type <- self$get_type(native=TRUE)
                        ds_create_pl <- self$get_create_plist()
@@ -784,17 +780,6 @@ H5D <- R6Class("H5D",
                        }
                    },
                    get_robj_dim=function(reg_eval_res) {
-                       "Get the size of the resulting R object"
-                       ""
-                       "For normal objects, just uses the size of the indices in the request, and evaluates"
-                       "them bost pre- and post-shuffle. If the internal object is an array, additional dimensions"
-                       "are appended at the end."
-                       "@title Get the size of the resulting R object"
-                       "@param reg_eval_res The result of the regularity evaluation"
-                       "@param dtype The datatype under consideration"
-                       "@return A list with the dimensions of the resulting object, pre- and post shuffle"
-                       "@author Holger Hoefling"
-                       "@keywords internal"
                        add_array_dims <- NULL
                        dtype_id <- standalone_H5D_get_type(h5d_id=self$id, native=TRUE)
                        on.exit(.Call("R_H5Tclose", dtype_id, PACKAGE = "hdf5r"), add=TRUE)
@@ -821,15 +806,15 @@ R6_set_list_of_items(H5D, "public", commonFGDTA, overwrite=TRUE)
 
 
 
-##' Get the id of an H5RefClass
-##'
-##' If it is a H5RefClass, returns the id, otherwise returns the
-##' object itself as it assumes it is already an id.
-##' @title Get the id of an H5RefClass
-##' @param obj Object to get the id from
-##' @return The id itself
-##' @author Holger Hoefling
-##' @keywords internal
+#' Get the id of an H5RefClass
+#'
+#' If it is a H5RefClass, returns the id, otherwise returns the
+#' object itself as it assumes it is already an id.
+#' @title Get the id of an H5RefClass
+#' @param obj Object to get the id from
+#' @return The id itself
+#' @author Holger Hoefling
+#' @keywords internal
 get_id <- function(obj) {
     if(inherits(obj, "H5RefClass")) {
         return(obj$id)
@@ -840,17 +825,17 @@ get_id <- function(obj) {
 }
 
 
-##' Get the id of a type of the dataset
-##'
-##' A function that just returns an id; it is written standalone so that
-##' one can use it to avoid the creation of R6 classes that be a considerable overhead in
-##' certain circumstances
-##' @title Get the id of a type of the dataset
-##' @param native Should it be ensured that it is a native type
-##' @param h5d_id The id of the dataset to get the type from
-##' @return An id; the user has to ensure that the id is eventually closed
-##' @author Holger Hoefling
-##' @keywords internal
+#' Get the id of a type of the dataset
+#'
+#' A function that just returns an id; it is written standalone so that
+#' one can use it to avoid the creation of R6 classes that be a considerable overhead in
+#' certain circumstances
+#' @title Get the id of a type of the dataset
+#' @param native Should it be ensured that it is a native type
+#' @param h5d_id The id of the dataset to get the type from
+#' @return An id; the user has to ensure that the id is eventually closed
+#' @author Holger Hoefling
+#' @keywords internal
 standalone_H5D_get_type <- function(h5d_id, native=TRUE) {
     id <- .Call("R_H5Dget_type", h5d_id, PACKAGE="hdf5r")$return_val
     if(id < 0) {

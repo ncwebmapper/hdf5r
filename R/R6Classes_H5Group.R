@@ -23,26 +23,43 @@
 
 
 
-##' Class for representing HDF5 groups
-##' 
-##' This class represents an HDF5 group-id. It inherits all functions of the
-##' \code{\link{H5RefClass-class}}. 
-##'
-##' @docType class
-##' @importFrom R6 R6Class
-##' @return Object of class \code{\link{H5Group}}. 
-##' @export
-##' @author Holger Hoefling
-##' @seealso H5Class_overview
+#' Class for representing HDF5 groups
+#' 
+#' This class represents an HDF5 group-id. It inherits all functions of the
+#' \code{\link{H5RefClass-class}}. 
+#'
+#' @docType class
+#' @name H5Group
+#' @rdname H5Group-class
+#' @importFrom R6 R6Class
+#' @return Object of class \code{\link{H5Group}}. 
+#' @author Holger Hoefling
+#'
+#' @template commonFG
+#' @template commonFG_active
+#' @template commonFGT
+#' @template commonFGDT
+#' @template commonFGDTA
+#'
+#' @section Methods:
+#' \describe{
+#'   \item{\code{print(..., max.attributes = 10, max.listing = 10)}}{
+#'     Prints information for the group
+#'     \strong{Parameters:}
+#'     \describe{
+#'       \item{max.attributes}{Maximum number of attribute names to print}
+#'       \item{max.listing}{Maximum number of ls-items to print}
+#'       \item{...}{ignored}
+#'     }
+#'   }
+#' }
+NULL
+
+#' @export
 H5Group <- R6Class("H5Group",
                    inherit=H5RefClass,
                    public=list(
                        print=function(..., max.attributes=10, max.listing=10){
-                           "Prints information for the group"
-                           "@param max.attributes Maximum number of attribute names to print"
-                           "@param max.listing Maximum number of ls-items to print"
-                           "@param ... ignored"
-
                            is_valid <- self$is_valid
 
                            print_class_id(self, is_valid)
@@ -70,14 +87,14 @@ R6_set_list_of_items(H5Group, "public", commonFGDT, overwrite=TRUE)
 R6_set_list_of_items(H5Group, "public", commonFGDTA, overwrite=TRUE)
 
 
-##' Wrap an HDF5-id in the appropriate class
-##'
-##' This particular factory dispatches ids that can be of type Group, Datatype of dataset (these are
-##' id types that can be the result of opening an object. For datatypes, the \code{\link{H5T_factory}} exists that can be used
-##' @title Wrap an HDF5-id in the appropriate class
-##' @param id The id to wrap in an R6-class object
-##' @return An R6-class object corresponding to the HDF5 internal class of the ID
-##' @author Holger Hoefling
+#' Wrap an HDF5-id in the appropriate class
+#'
+#' This particular factory dispatches ids that can be of type Group, Datatype of dataset (these are
+#' id types that can be the result of opening an object. For datatypes, the \code{\link{H5T_factory}} exists that can be used
+#' @title Wrap an HDF5-id in the appropriate class
+#' @param id The id to wrap in an R6-class object
+#' @return An R6-class object corresponding to the HDF5 internal class of the ID
+#' @author Holger Hoefling
 H5GTD_factory <- function(id) {
     ## find out the type, then stick it into the correct R6-class (or send to the next factory)
     res <- .Call("R_H5Iget_type", id, PACKAGE = "hdf5r")$return_val

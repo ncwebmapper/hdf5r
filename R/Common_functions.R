@@ -69,11 +69,6 @@ interface <- list(
 
 commonFG <- list(
     open=function(name, link_access_pl=h5const$H5P_DEFAULT, dataset_access_pl=h5const$H5P_DEFAULT, type_access_pl=h5const$H5P_DEFAULT) {
-        "Opens groups, datasets or types using the appropriate HDF5-API functions. Please see the documentation at"
-        "\\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-Open} for datasets, "
-        "\\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5O.html#Object-Open} for types and "
-        "\\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5O.html#Object-Open} for general objects."
-
         if (length(name)!=1 || !is.character(name)) stop("'name' must be a character string of length 1")
 
         ## check the property lists and get their ids if they aren't already default
@@ -103,9 +98,6 @@ commonFG <- list(
         }
     },
     open_by_idx=function(n, group_name=".", index_type=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Oopen_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5O.html#Object-OpenByIdx} for details."
-
         if (length(group_name)!=1 || !is.character(group_name)) stop("'group_name' must be a character string of length 1")
 
         ## check the property lists and get their ids if they aren't already default
@@ -125,8 +117,6 @@ commonFG <- list(
     },
     ls=function(recursive=FALSE, detailed=FALSE, index_type=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE, link_access_pl=h5const$H5P_DEFAULT,
         dataset_access_pl=h5const$H5P_DEFAULT, type_access_pl=h5const$H5P_DEFAULT) {
-        "Returns the contents of a file or group as a data.frame."
-
         ls_res <- .Call("R_H5ls", self$id, recursive, index_type, order, link_access_pl$id,
                         dataset_access_pl$id, type_access_pl$id, PACKAGE='hdf5r')$return_val
         ls_res <- clean_ls_df(ls_res)
@@ -141,9 +131,6 @@ commonFG <- list(
         }
     },
     exists=function(name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lexists."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Exists} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
         res <- .Call("R_H5Lexists", self$id, name, link_access_pl$id, PACKAGE = "hdf5r")$return_val
         if(res < 0) {
@@ -152,9 +139,6 @@ commonFG <- list(
         return(res > 0)
     },
     path_valid=function(path, check_object_valid=TRUE) {
-        "This function implements the HDF5-API function H5LTpath_valid."
-        "Please see the documentation at \\url{https://support.hdfgroup.org/HDF5/doc/HL/RM_H5LT.html#H5LTpath_valid} for details."
-
         res <- .Call("R_H5LTpath_valid", self$id, path, check_object_valid, PACKAGE = "hdf5r")$return_val
         if(res < 0) {
             stop("Error trying to ascertain if path is valid")
@@ -162,9 +146,6 @@ commonFG <- list(
         return(res > 0)
     },
     link=function(obj, new_link_name, link_create_pl=h5const$H5P_DEFAULT, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Olink."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5O.html#Object-Link} for details."
-
         if(!(inherits(obj, "H5D") || inherits(obj, "H5Group") || inherits(obj, "H5T"))) {
             stop("obj has to be a group, dataset or type")
         }
@@ -178,9 +159,6 @@ commonFG <- list(
         return(invisible(self))
     },
     obj_copy_to=function(dst_loc, dst_name, src_name, object_copy_pl=h5const$H5P_DEFAULT, link_create_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Ocopy."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5O.html#Object-Copy} for details."
-
         if(!(inherits(dst_loc, "H5File") || inherits(dst_loc, "H5Group"))) {
             stop("dst_loc has to be a file or group")
         }
@@ -194,9 +172,6 @@ commonFG <- list(
         return(invisible(self))
     },
     obj_copy_from=function(src_loc, src_name, dst_name, object_copy_pl=h5const$H5P_DEFAULT, link_create_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Ocopy."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5O.html#Object-Copy} for details."
-
         if(!(inherits(src_loc, "H5File") || inherits(src_loc, "H5Group"))) {
             stop("src_loc has to be a file or group")
         }
@@ -210,8 +185,6 @@ commonFG <- list(
         return(invisible(self))
     },
     obj_info_by_idx=function(n, group_name=".", index_field=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE, remove_internal_use_only=TRUE) {
-        "This function implements the HDF5-API function H5Oget_info_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5O.html#Object-GetInfoByIdx} for details."
         if(group_name!="." && !self$exists(group_name)) {
             stop(paste(group_name, " does not exist"))
         }
@@ -231,9 +204,6 @@ commonFG <- list(
         }
     },
     obj_info_by_name=function(object_name, remove_internal_use_only=TRUE) {
-        "This function implements the HDF5-API function H5Oget_info_by_name."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5O.html#Object-GetInfoByName} for details."
-
         if(!self$exists(object_name)) {
             stop(paste(object_name, " does not exist"))
         }
@@ -252,9 +222,6 @@ commonFG <- list(
         }
     },
     group_info=function() {
-        "This function implements the HDF5-API function H5Gget_info."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5G.html#Group-GetInfo} for details."
-
         res <- .Call("R_H5Gget_info", self$id, request_empty(1), PACKAGE = "hdf5r")
         if(res$return_val < 0) {
             stop("Error getting object info")
@@ -262,9 +229,6 @@ commonFG <- list(
         return(res$ginfo)
     },
     group_info_by_name=function(name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Gget_info_by_name."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5G.html#Group-GetInfoByName} for details."
-
         res <- .Call("R_H5Gget_info_by_name", self$id, name, request_empty(1), link_access_pl$id,
                      PACKAGE = "hdf5r")
         if(res$return_val < 0) {
@@ -274,9 +238,6 @@ commonFG <- list(
     },
     group_info_by_idx=function(n, group_name=".",  index_field=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE,
         link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Gget_info_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5G.html#Group-GetInfoByIdx} for details."
-
         if(group_name!="." && !self$exists(group_name)) {
             stop(paste(group_name, " does not exist"))
         }
@@ -289,10 +250,6 @@ commonFG <- list(
     },
     create_group=function(name, link_create_pl=h5const$H5P_DEFAULT, group_create_pl=h5const$H5P_DEFAULT,
         group_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Gcreate2 and H5Gcreate_anon (if name is NULL). Please see the documentation at"
-        "\\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5G.html#Group-Create2} for regular groups and"
-        "\\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5G.html#Group-CreateAnon} for anonymous groups for details."
-
         if(!(is.null(name) || is.character(name))) {
             stop("name has to be NULL or a character vector")
         }
@@ -317,29 +274,7 @@ commonFG <- list(
     },
     create_dataset=function(name, robj=NULL, dtype=NULL, space=NULL, dims=NULL, chunk_dims="auto", gzip_level=4,
         link_create_pl=h5const$H5P_DEFAULT, dataset_create_pl=h5const$H5P_DEFAULT, dataset_access_pl=h5const$H5P_DEFAULT) {
-        "This function is the main interface to create a new dataset. Its parameters allow for customization of the default"
-        "behaviour, i.e. in order to get a specific datatype, a certain chunk size or dataset dimensionality."
-        "Also note that this function implements the HDF5-API function H5Dcreate2 and H5Dcreate_anon (if name is NULL). Please see the documentation at"
-        "\\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-Create2} for regular groups and"
-        "\\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-CreateAnon} for anonymous groups for details."
-        "@param name The name of the new dataset. If missing, an anonymous dataset is created"
-        "@param robj An R-object to take as a template for creating the dataset. Either \\code{robj} or both \\code{dtype} and {space}"
-        "have to be provided"
-        "@param dtype The datatype to use for the creation of the object. Can be null if \\code{robj} is given."
-        "@param space The space to use for the object creation. Can be null if \\code{robj} is given. Otherwise an object of type \\code{H5S-class} which specifies the dimensions of the dataset."
-        "@param dims Dimension of the new dataset; used if \\code{space} is \\code{NULL}. overwrite the dimension guessed from \\code{robj}"
-        "if \\code{robj} is given."
-        "@param chunk_dims Size of the chunk. Has to have the same length as the dataset dimension. If \\code{\"auto\"}"
-        "then the size of each chunk is estimated so that each chunk is roughly as large in bytes as the value in"
-        "the \\code{hdf5r.chunk_size} option. See also \\code{\\link{guess_chunks}} for a more detailed explanation."
-        "If set to \\code{NULL}, then no chunking is used, unless explicitly set in \\code{dataset_create_pl}."
-        "@param gzip_level Only if \\code{chunk_dims} is not null. If given, then the \\code{dataset_create_pl} is set to enable zipping"
-        "at the level given here. If set to NULL, then gzip is not set (but could be set otherwise in \\code{dataset_create_pl}"
-        "@param link_create_pl Link creation property list. See \\code{\\link{H5P_LINK_CREATE-class}}"
-        "@param dataset_create_pl Datatset creation property list. See \\code{\\link{H5P_DATASET_CREATE-class}}"
-        "@param dataset_access_pl Dataset access property list. See \\code{\\link{H5P_DATASET_ACCESS-class}}"
-
-
+        
         if(missing(name)) {
             name <- character(0)
         }
@@ -454,9 +389,7 @@ commonFG <- list(
     },
     commit=function(name, dtype, link_create_pl=h5const$H5P_DEFAULT, type_create_pl=h5const$H5P_DEFAULT,
         type_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Tcommit2."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5T.html#Datatype-Commit2} for details."
-
+      
         if(missing(name)) {
             name <- character(0)
         }
@@ -491,9 +424,6 @@ commonFG <- list(
     },
     ## functions around the link interface
     link_create_hard=function(obj_loc, obj_name, link_name, link_create_pl=h5const$H5P_DEFAULT, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lcreate_hard."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-CreateHard} for details."
-
         if(!(inherits(obj_loc, "H5File") || inherits(obj_loc, "H5Group"))) {
             stop("src_loc has to be a file or group")
         }
@@ -508,9 +438,6 @@ commonFG <- list(
         return(invisible(self))
     },
     link_create_soft=function(target_path, link_name, link_create_pl=h5const$H5P_DEFAULT, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lcreate_soft."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-CreateSoft} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
         check_pl(link_create_pl, "H5P_LINK_CREATE")
 
@@ -524,9 +451,6 @@ commonFG <- list(
     },
     link_create_external=function(target_filename, target_obj_name, link_name, link_create_pl=h5const$H5P_DEFAULT,
         link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lcreate_external."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-CreateExternal} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
         check_pl(link_create_pl, "H5P_LINK_CREATE")
 
@@ -539,9 +463,6 @@ commonFG <- list(
 
     },
     link_exists=function(name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lexists."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Exists} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         htri <- .Call("R_H5Lexists", self$id, name, link_access_pl$id, PACKAGE="hdf5r")$return_val
@@ -551,9 +472,6 @@ commonFG <- list(
         return(as.logical(htri))
     },
     link_move_from=function(src_loc, src_name, dst_name, link_create_pl=h5const$H5P_DEFAULT, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lmove."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Move} for details."
-
         if(!(inherits(src_loc, "H5File") || inherits(src_loc, "H5Group"))) {
             stop("src_loc has to be a file or group")
         }
@@ -568,9 +486,6 @@ commonFG <- list(
 
     },
     link_move_to=function(dst_loc, dst_name, src_name, link_create_pl=h5const$H5P_DEFAULT, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lmove."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Move} for details."
-
         if(!(inherits(dst_loc, "H5File") || inherits(dst_loc, "H5Group"))) {
             stop("src_loc has to be a file or group")
         }
@@ -585,9 +500,6 @@ commonFG <- list(
 
     },
     link_copy_from=function(src_loc, src_name, dst_name, link_create_pl=h5const$H5P_DEFAULT, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lcopy."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Copy} for details."
-
         if(!(inherits(src_loc, "H5File") || inherits(src_loc, "H5Group"))) {
             stop("src_loc has to be a file or group")
         }
@@ -602,9 +514,6 @@ commonFG <- list(
 
     },
     link_copy_to=function(dst_loc, dst_name, src_name, link_create_pl=h5const$H5P_DEFAULT, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lcopy."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Copy} for details."
-
         if(!(inherits(dst_loc, "H5File") || inherits(dst_loc, "H5Group"))) {
             stop("src_loc has to be a file or group")
         }
@@ -619,9 +528,6 @@ commonFG <- list(
 
     },
     link_delete=function(name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Ldelete."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Delete} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         herr <- .Call("R_H5Ldelete", self$id, name, link_access_pl$id, PACKAGE="hdf5r")$return_val
@@ -633,9 +539,6 @@ commonFG <- list(
     },
     link_delete_by_idx=function(n, group_name=".", index_field=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE,
         link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Ldelete_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-DeleteByIdx} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         if(group_name!="." && !self$exists(group_name)) {
@@ -650,9 +553,6 @@ commonFG <- list(
 
     },
     link_info=function(name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lget_info."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-GetInfo} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         res <- .Call("R_H5Lget_info", self$id, name, request_empty(1), link_access_pl$id, PACKAGE="hdf5r")
@@ -663,9 +563,6 @@ commonFG <- list(
     },
     link_info_by_idx=function(n, group_name=".", index_field=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE,
         link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lget_info_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-GetInfoByIdx} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         if(group_name!="." && !self$exists(group_name)) {
@@ -680,9 +577,6 @@ commonFG <- list(
         return(res$linfo)
     },
     link_value=function(name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lget_val."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-GetVal} for details."
-
         ## first check if it is a soft or external link, otherwise return NA
         linfo <- self$link_info(name=name, link_access_pl=link_access_pl)
         if(!(as.character(linfo$type) %in% c("H5L_TYPE_SOFT", "H5L_TYPE_EXTERNAL"))) {
@@ -714,9 +608,6 @@ commonFG <- list(
     },
     link_value_by_idx=function(n, group_name=".", index_field=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE,
         link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lget_val_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-GetValByIdx} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         if(group_name!="." && !self$exists(group_name)) {
@@ -754,9 +645,6 @@ commonFG <- list(
 
     },
     link_name_by_idx=function(n, group_name, idx_type=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Lget_name_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-GetNameByIdx} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         if(group_name!="." && !self$exists(group_name)) {
@@ -775,8 +663,6 @@ commonFG <- list(
 
     },
     mount=function(name, child) {
-        "This function implements the HDF5-API function H5Fmount."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5F.html#File-Mount} for details."
         if(!is.character(name) || length(name) != 1) {
             stop("name has to be a character vector of length 1")
         }
@@ -793,8 +679,6 @@ commonFG <- list(
         return(self$open(name))
     },
     unmount=function(name) {
-        "This function implements the HDF5-API function H5Funmount."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5F.html#File-Unmount} for details."
         if(!is.character(name) || length(name) != 1) {
             stop("name has to be a character vector of length 1")
         }
@@ -809,9 +693,6 @@ commonFG <- list(
         return(self)
     }
     )
-
-
-
 
 commonFG_active <- list(
         names=function(link_access_pl=h5const$H5P_DEFAULT) {
@@ -828,17 +709,8 @@ commonFG_active <- list(
     }
 )
 
-
-
-
-
-
-
 commonFGDT <- list(
     obj_info=function(remove_internal_use_only=TRUE) {
-        "This function implements the HDF5-API function H5Oget_info."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5O.html#Object-GetInfo} for details."
-
         res <- .Call("R_H5Oget_info", self$id, request_empty(1), PACKAGE = "hdf5r")
         if(res$return_val < 0) {
             stop("Error getting object info")
@@ -853,9 +725,6 @@ commonFGDT <- list(
         }
     },
     get_obj_name=function() {
-        "This function implements the HDF5-API function H5Iget_name."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5I.html#Identify-GetName} for details."
-
         ## get size of the name
         name_size <- .Call("R_H5Iget_name", self$id, character(0), 0, PACKAGE="hdf5r")$return_val
         if(name_size < 0) {
@@ -874,9 +743,6 @@ commonFGDT <- list(
     },
     ## functions that work on attributes
     create_attr=function(attr_name, robj=NULL, dtype=NULL, space=NULL) {
-        "This function implements the HDF5-API function H5Acreate2."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-Create2} for details."
-
         if(!is.character(attr_name) || length(attr_name) != 1) {
             stop("'attr_name' has to be a character vector of length 1")
         }
@@ -911,9 +777,6 @@ commonFGDT <- list(
         return(attr)
     },
     attr_open=function(attr_name) {
-        "This function implements the HDF5-API function H5Aopen."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-Open} for details."
-
         if(!is.character(attr_name) || length(attr_name) != 1) {
             stop("'attr_name' has to be a character vector of length 1")
         }
@@ -926,9 +789,6 @@ commonFGDT <- list(
         return(H5A$new(id=id))
     },
     create_attr_by_name=function(attr_name, obj_name, robj=NULL, dtype=NULL, space=NULL, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Acreate_by_name."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-CreateByName} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         if(!is.character(obj_name) || length(obj_name) != 1) {
@@ -964,9 +824,6 @@ commonFGDT <- list(
 
     },
     attr_open_by_name=function(attr_name, obj_name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Aopen_by_name."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-OpenByName} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         if(!is.character(obj_name) || length(obj_name) != 1) {
@@ -984,9 +841,6 @@ commonFGDT <- list(
         return(H5A$new(id=id))
     },
     attr_open_by_idx=function(n, obj_name, idx_type=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Aopen_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-OpenByIdx} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         if(!is.character(obj_name) || length(obj_name) != 1) {
@@ -1002,8 +856,6 @@ commonFGDT <- list(
 
     },
     attr_exists_by_name=function(attr_name, obj_name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Aexists_by_name."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-ExistsByName} for details."
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         if(!is.character(obj_name) || length(obj_name) != 1) {
@@ -1019,9 +871,6 @@ commonFGDT <- list(
         return(as.logical(res))
     },
     attr_exists=function(attr_name) {
-        "This function implements the HDF5-API function H5Aexists."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-Exists} for details."
-
         if(!is.character(attr_name) || length(attr_name) != 1) {
             stop("'attr_name' has to be a character vector of length 1")
         }
@@ -1032,9 +881,6 @@ commonFGDT <- list(
         return(as.logical(res))
     },
    attr_rename_by_name=function(old_attr_name, new_attr_name, obj_name, link_access_pl=h5const$H5P_DEFAULT) {
-       "This function implements the HDF5-API function H5Arename_by_name."
-       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-RenameByName} for details."
-
        check_pl(link_access_pl, "H5P_LINK_ACCESS")
 
         if(!is.character(obj_name) || length(obj_name) != 1) {
@@ -1053,9 +899,6 @@ commonFGDT <- list(
         return(invisible(self))
     },
     attr_rename=function(old_attr_name, new_attr_name) {
-        "This function implements the HDF5-API function H5Arename."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-Rename} for details."
-
         if(!is.character(old_attr_name) || length(old_attr_name) != 1) {
             stop("'old_attr_name' has to be a character vector of length 1")
         }
@@ -1069,9 +912,6 @@ commonFGDT <- list(
         return(invisible(self))
     },
     attr_delete=function(attr_name) {
-        "This function implements the HDF5-API function H5Adelete."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-Delete} for details."
-
         if(!is.character(attr_name) || length(attr_name) != 1) {
             stop("'attr_name' has to be a character vector of length 1")
         }
@@ -1082,9 +922,6 @@ commonFGDT <- list(
         return(invisible(self))
     },
     attr_delete_by_name=function(attr_name, obj_name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Adelete_by_name."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-DeleteByName} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
         if(!is.character(obj_name) || length(obj_name) != 1) {
             stop("'obj_name' has to be a character vector of length 1")
@@ -1100,9 +937,6 @@ commonFGDT <- list(
         return(invisible(self))
     },
     attr_delete_by_idx=function(n, obj_name, idx_type=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Adelete_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-DeleteByIdx} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
         if(!is.character(obj_name) || length(obj_name) != 1) {
             stop("'obj_name' has to be a character vector of length 1")
@@ -1116,9 +950,6 @@ commonFGDT <- list(
 
     },
     attr_info_by_name=function(attr_name, obj_name, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Aget_info_by_name."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetInfoByName} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
         if(!is.character(obj_name) || length(obj_name) != 1) {
             stop("'obj_name' has to be a character vector of length 1")
@@ -1134,9 +965,6 @@ commonFGDT <- list(
         return(res$ainfo)
     },
     attr_info_by_idx=function(n, obj_name, idx_type=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Aget_info_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetInfoByIdx} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
         if(!is.character(obj_name) || length(obj_name) != 1) {
             stop("'obj_name' has to be a character vector of length 1")
@@ -1149,9 +977,6 @@ commonFGDT <- list(
         return(res$ainfo)
     },
     attr_name_by_idx=function(n, obj_name, idx_type=h5const$H5_INDEX_NAME, order=h5const$H5_ITER_NATIVE, link_access_pl=h5const$H5P_DEFAULT) {
-        "This function implements the HDF5-API function H5Aget_name_by_idx."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetNameByIdx} for details."
-
         check_pl(link_access_pl, "H5P_LINK_ACCESS")
         if(!is.character(obj_name) || length(obj_name) != 1) {
             stop("'obj_name' has to be a character vector of length 1")
@@ -1169,9 +994,6 @@ commonFGDT <- list(
     }
 )
 
-
-## create reference for datasets is implemented separately to allower for better ease of use in creating
-## H5R_DATASET_REGION references
 commonFGT <- list(
     create_reference=function(name=".", space=NULL) {
         "This function implements the HDF5-API function H5Rcreate. If \\code{space=NULL} then a \\code{H5R_OBJECT} reference"
@@ -1200,9 +1022,6 @@ commonFGT <- list(
 
 commonFGDTA <- list(
     flush=function(scope=h5const$H5F_SCOPE_GLOBAL) {
-        "This function implements the HDF5-API function H5Fflush."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5F.html#File-Flush} for details."
-
         if(self$is_valid) {
             res <- .Call("R_H5Fflush", self$id, scope, PACKAGE="hdf5r")$return_val
             if(res < 0) {
@@ -1215,9 +1034,6 @@ commonFGDTA <- list(
         }
     },
     get_filename=function() {
-        "This function implements the HDF5-API function H5Fget_name."
-        "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5F.html#File-GetName} for details."
-
         ## get size of the name
         name_size <- .Call("R_H5Fget_name", self$id, character(0), 0, PACKAGE="hdf5r")$return_val
         if(name_size < 0) {

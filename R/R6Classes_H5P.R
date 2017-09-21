@@ -17,75 +17,76 @@
 #############################################################################
 
 
-##' Create an \\code{\\link{H5P-class}} out of an id
+##' Create an \code{\link{H5P-class}} out of an id
 ##'
 ##' Function that determines the property list type of an id and creates
 ##' the appropriate class for it.
-##' @title Create an \\code{\\link{H5P-class}} out of an id
+##' @title Create an \code{\link{H5P-class}} out of an id
 ##' @param id The id to wrap inside an object
-##' @return An object of class \\code{\\link{H5P}}
+##' @return An object of class \code{\link{H5P}}
 ##' @author Holger Hoefling
 ##' @export
 H5P_factory <- function(id) {
-    if(inherits(id, "H5P_CLASS")) {
-        cls_id <- id$id
-        id <- .Call("R_H5Pcreate", cls_id, PACKAGE="hdf5r")$return_val
-        if(id < 0) {
-            stop("Error creating new property list")
-        }
+  if(inherits(id, "H5P_CLASS")) {
+    cls_id <- id$id
+    id <- .Call("R_H5Pcreate", cls_id, PACKAGE="hdf5r")$return_val
+    if(id < 0) {
+      stop("Error creating new property list")
     }
-    else if(id %in% h5const$H5P) {
-        cls_id <- id
-        id <- .Call("R_H5Pcreate", cls_id, PACKAGE="hdf5r")$return_val
-        if(id < 0) {
-            stop("Error creating new property list")
-        }
+  }
+  else if(id %in% h5const$H5P) {
+    cls_id <- id
+    id <- .Call("R_H5Pcreate", cls_id, PACKAGE="hdf5r")$return_val
+    if(id < 0) {
+      stop("Error creating new property list")
     }
-    else {
-        ## we don't create a full object, so need to take care of closing it ourselves
-        ## it is also temporary and not to be returned
-        cls_id <- .Call("R_H5Pget_class", id, PACKAGE="hdf5r")$return_val
-        on.exit(.Call("R_H5Pclose_class", cls_id, PACKAGE="hdf5r"))
+  }
+  else {
+    ## we don't create a full object, so need to take care of closing it ourselves
+    ## it is also temporary and not to be returned
+    cls_id <- .Call("R_H5Pget_class", id, PACKAGE="hdf5r")$return_val
+    on.exit(.Call("R_H5Pclose_class", cls_id, PACKAGE="hdf5r"))
+  }
+  
+  h5p_equal <- function(id1, id2) {
+    htri <- .Call("R_H5Pequal", id1, id2, PACKAGE="hdf5r")
+    if(htri < 0) {
+      stop("Error comparing the ids")
     }
-
-    h5p_equal <- function(id1, id2) {
-        htri <- .Call("R_H5Pequal", id1, id2, PACKAGE="hdf5r")
-        if(htri < 0) {
-            stop("Error comparing the ids")
-        }
-        return(as.logical(htri))
-    }
-
-    if(h5p_equal(cls_id, h5const$H5P_DATASET_CREATE)) {
-        obj <- H5P_DATASET_CREATE$new(id=id)
-    }
-    else if(h5p_equal(cls_id, h5const$H5P_DATASET_ACCESS)) {
-        obj <- H5P_DATASET_ACCESS$new(id=id)
-    }
-    else if(h5p_equal(cls_id, h5const$H5P_DATASET_XFER)) {
-        obj <- H5P_DATASET_XFER$new(id=id)
-    }
-    else if(h5p_equal(cls_id, h5const$H5P_LINK_CREATE)) {
-        obj <- H5P_LINK_CREATE$new(id=id)
-    }
-    else if(h5p_equal(cls_id, h5const$H5P_LINK_ACCESS)) {
-        obj <- H5P_LINK_ACCESS$new(id=id)
-    }
-    else if(h5p_equal(cls_id, h5const$H5P_OBJECT_CREATE)) {
-        obj <- H5P_OBJECT_CREATE$new(id=id)
-    }
-    else if(h5p_equal(cls_id, h5const$H5P_OBJECT_COPY)) {
-        obj <- H5P_OBJECT_COPY$new(id=id)
-    }
-    else if(h5p_equal(cls_id, h5const$H5P_ATTRIBUTE_CREATE)) {
-        obj <- H5P_ATTRIBUTE_CREATE$new(id=id)
-    }
-    else {
-        obj <- H5P$new(id=id)
-
-    }
-    return(obj)
+    return(as.logical(htri))
+  }
+  
+  if(h5p_equal(cls_id, h5const$H5P_DATASET_CREATE)) {
+    obj <- H5P_DATASET_CREATE$new(id=id)
+  }
+  else if(h5p_equal(cls_id, h5const$H5P_DATASET_ACCESS)) {
+    obj <- H5P_DATASET_ACCESS$new(id=id)
+  }
+  else if(h5p_equal(cls_id, h5const$H5P_DATASET_XFER)) {
+    obj <- H5P_DATASET_XFER$new(id=id)
+  }
+  else if(h5p_equal(cls_id, h5const$H5P_LINK_CREATE)) {
+    obj <- H5P_LINK_CREATE$new(id=id)
+  }
+  else if(h5p_equal(cls_id, h5const$H5P_LINK_ACCESS)) {
+    obj <- H5P_LINK_ACCESS$new(id=id)
+  }
+  else if(h5p_equal(cls_id, h5const$H5P_OBJECT_CREATE)) {
+    obj <- H5P_OBJECT_CREATE$new(id=id)
+  }
+  else if(h5p_equal(cls_id, h5const$H5P_OBJECT_COPY)) {
+    obj <- H5P_OBJECT_COPY$new(id=id)
+  }
+  else if(h5p_equal(cls_id, h5const$H5P_ATTRIBUTE_CREATE)) {
+    obj <- H5P_ATTRIBUTE_CREATE$new(id=id)
+  }
+  else {
+    obj <- H5P$new(id=id)
+    
+  }
+  return(obj)
 }
+
 
 #' Class for HDF5 property lists.
 #'
@@ -103,49 +104,50 @@ H5P_factory <- function(id) {
 #' \item{Attribute Creation}{\code{\link{H5P_ATTRIBUTE_CREATE-class}}}
 #' }
 #' @docType class
+#' @name H5P
+#' @rdname H5P-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link{H5P}}.
-#' @export
 #' @author Holger Hoefling
-#' @seealso H5Class_overview
+#' 
+#' @section Methods:
+#'   \describe{
+#'     \item{\code{new(id = NULL)}}{Create a new property list; this function itself is unlikely to be needed by users. Users should use the classes of the type they actually require
+#'       \strong{Parameters:}
+#'       \describe{
+#'         \item{id}{Internal use only}
+#'       }}
+#'     \item{\code{get_class()}}{This function implements the HDF5-API function H5Pget_class. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetClass} for details.}
+#'     \item{\code{get_class_name()}}{This function implements the HDF5-API function H5Pget_class_name. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetClassName} for details.}
+#'     \item{\code{copy()}}{This function implements the HDF5-API function H5Pcopy. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-Copy} for details.}
+#'     \item{\code{equal(cmp)}}{This function implements the HDF5-API function H5Pequal. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-Equal} for details.}
+#'   }
+NULL
+
+#' @export
 H5P <- R6Class("H5P",
                inherit=H5RefClass,
                public=list(
                    initialize=function(id=NULL) {
-                       "Create a new property list; this function itself is unlikely to be needed by users. Users should"
-                       "use the classes of the type they actually require"
-                       "@param id Internal use only"
                        if(is.null(id)) {
                            stop("Can't create H5P object without id")
                        }
                        super$initialize(id)
                    },
                    get_class=function() {
-                       "This function implements the HDF5-API function H5Pget_class."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetClass} for details."
-
                        id <- .Call("R_H5Pget_class", self$id, PACKAGE="hdf5r")$return_val
                        return(H5P_CLASS$new(id=id))
                    },
                    get_class_name=function() {
-                       "This function implements the HDF5-API function H5Pget_class_name."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetClassName} for details."
-
                        cls <- self$get_class()
                        cls_name <- .Call("R_H5Pget_class_name", cls$id, PACKAGE="hdf5r")$return_val
                        return(cls_name)
                    },
                    copy=function() {
-                       "This function implements the HDF5-API function H5Pcopy."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-Copy} for details."
-
                        propid <- .Call("R_H5Pcopy", self$id, PACKAGE="hdf5r")$return_val
                        return(H5P_factory(id=propid))
                    },
                    equal=function(cmp) {
-                       "This function implements the HDF5-API function H5Pequal."
-                       "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-Equal} for details."
-
                        if(!inherits(cmp, "H5P")) {
                            stop("cmp has to be of class H5P")
                        }
@@ -169,11 +171,15 @@ H5P <- R6Class("H5P",
 #' This class represents default values for H5P property lists. As with H5S_DEFAULT, the current choice is not optimal
 #' for the same reasons and likely to be changed
 #' @docType class
+#' @name H5P_DEFAULT
+#' @rdname H5P_DEFAULT-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link{H5P}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview
+NULL
+
+#' @export
 H5P_DEFAULT <- R6Class("H5P_DEFAULT",
                        inherit=H5P,
                        public=list(
@@ -195,11 +201,20 @@ H5P_DEFAULT <- R6Class("H5P_DEFAULT",
 #' provide a mechanism to compare the class of HDf5 property classes. This is mainly intended for internal use
 #' to get the class type of an HDF5 identifier that is known to be a property list, but not of which type.
 #' @docType class
+#' @name H5P_CLASS
+#' @rdname H5P_CLASS-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_CLASS-class]{H5P_CLASS}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#'
+#' @section Methods:
+#'   \describe{
+#'     \item{\code{equal(cmp)}}{This function implements the HDF5-API function H5Pequal. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-Equal} for details.}
+#'   }
+NULL
+
+#' @export
 H5P_CLASS <- R6Class("H5P_CLASS",
                      inherit=H5RefClass,
                      public=list(
@@ -236,18 +251,41 @@ H5P_CLASS <- R6Class("H5P_CLASS",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_FILE_CREATE
+#' @rdname H5P_FILE_CREATE-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_FILE_CREATE-class]{H5P_FILE_CREATE}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#'
+#' @section Methods:
+#' \describe{
+#' \item{\code{new(id = NULL)}}{
+#' 
+#' Create a new class of type \code{\link{H5P_FILE_CREATE}}
+#' 
+#' \strong{Parameters:}
+#' \describe{
+#' \item{id}{Internal use only}
+#' }}
+#' \item{\code{set_userblock(size)}}{This function implements the HDF5-API function H5Pset_userblock. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetUserblock} for details.}
+#' \item{\code{get_userblock()}}{This function implements the HDF5-API function H5Pget_userblock. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetUserblock} for details.}
+#' \item{\code{set_sizes(sizeof_addr, sizeof_size)}}{This function implements the HDF5-API function H5Pset_sizes. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetSizes} for details.}
+#' \item{\code{get_sizes()}}{This function implements the HDF5-API function H5Pget_sizes. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetSizes} for details.}
+#' \item{\code{set_sym_k(ik, lk)}}{This function implements the HDF5-API function H5Pset_sym_k. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetSymK} for details.}
+#' \item{\code{get_sym_k()}}{This function implements the HDF5-API function H5Pget_sym_k. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetSymK} for details.}
+#' \item{\code{set_istore_k(ik)}}{This function implements the HDF5-API function H5Pset_istore_k. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetIstoreK} for details.}
+#' \item{\code{get_istore_k()}}{This function implements the HDF5-API function H5Pget_istore_k. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetIstoreK} for details.}
+#' \item{\code{set_file_space(strategy, threshold)}}{This function implements the HDF5-API function H5Pset_file_space. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetFileSpae} for details.}
+#' \item{\code{get_file_space()}}{This function implements the HDF5-API function H5Pget_file_space. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetFileSpace} for details.}
+#' }
+NULL
+
+#' @export
 H5P_FILE_CREATE <-  R6Class("H5P_FILE_CREATE",
                               inherit=H5P,
                               public=list(
                                   initialize=function(id=NULL) {
-                                      "Create a new class of type \\code{\\link{H5P_FILE_CREATE}}"
-                                      "@param id Internal use only"
-
                                       if(is.null(id)) {
                                           id <- .Call("R_H5Pcreate", h5const$H5P_FILE_CREATE, PACKAGE="hdf5r")$return_val
                                           if(id < 0) {
@@ -257,9 +295,6 @@ H5P_FILE_CREATE <-  R6Class("H5P_FILE_CREATE",
                                       super$initialize(id)
                                   },
                                   set_userblock=function(size) {
-                                      "This function implements the HDF5-API function H5Pset_userblock."
-                                      "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetUserblock} for details."
-
                                       ## ensure that it is a power of 2 with exponen >= 9
                                       log2_size <- log2(size)
                                       if(2^round(log2_size) != size) {
@@ -275,9 +310,6 @@ H5P_FILE_CREATE <-  R6Class("H5P_FILE_CREATE",
                                       return(invisible(self))
                                   },
                                   get_userblock=function() {
-                                      "This function implements the HDF5-API function H5Pget_userblock."
-                                      "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetUserblock} for details."
-
                                       res <- .Call("R_H5Pget_userblock", self$id, request_empty(1), PACKAGE="hdf5r")
                                       if(res$return_val < 0) {
                                           stop("Error retrieving user-block size")
@@ -285,9 +317,6 @@ H5P_FILE_CREATE <-  R6Class("H5P_FILE_CREATE",
                                       return(res$size)
                                   },
                                   set_sizes=function(sizeof_addr, sizeof_size) {
-                                      "This function implements the HDF5-API function H5Pset_sizes."
-                                      "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetSizes} for details."
-
                                       if(!sizeof_addr %in% c(0, 2, 4, 8, 16)) {
                                           stop(paste("sizeof_addr has to be one of 0, 2, 4, 8, or 16"))
                                       }
@@ -301,9 +330,6 @@ H5P_FILE_CREATE <-  R6Class("H5P_FILE_CREATE",
                                       return(invisible(self))
                                   },
                                   get_sizes=function() {
-                                      "This function implements the HDF5-API function H5Pget_sizes."
-                                      "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetSizes} for details."
-
                                       res <- .Call("R_H5Pget_sizes", self$id, request_empty(1), request_empty(1), PACKAGE="hdf5r")
                                       if(res$return_val < 0) {
                                           stop("Error retrieving user-block size")
@@ -311,16 +337,10 @@ H5P_FILE_CREATE <-  R6Class("H5P_FILE_CREATE",
                                       return(list(sizeof_addr=res$sizeof_addr, sizeof_size=res$sizeof_size))
                                   },
                                   set_sym_k=function(ik, lk) {
-                                      "This function implements the HDF5-API function H5Pset_sym_k."
-                                      "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetSymK} for details."
-
                                       herr <- .Call("R_H5Pset_sym_k", self$id, ik, lk, PACKAGE="hdf5r")$return_val
                                       return(invisible(self))
                                   },
                                   get_sym_k=function() {
-                                      "This function implements the HDF5-API function H5Pget_sym_k."
-                                      "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetSymK} for details."
-
                                       res <- .Call("R_H5Pget_sym_k", self$id, request_empty(1), request_empty(1), PACKAGE="hdf5r")
                                       if(res$return_val < 0) {
                                           stop("Error retrieving user-block size")
@@ -328,16 +348,10 @@ H5P_FILE_CREATE <-  R6Class("H5P_FILE_CREATE",
                                       return(list(ik=res$ik, lk=res$lk))
                                   },
                                   set_istore_k=function(ik) {
-                                      "This function implements the HDF5-API function H5Pset_istore_k."
-                                      "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetIstoreK} for details."
-
                                       herr <- .Call("R_H5Pset_istore_k", self$id, ik, PACKAGE="hdf5r")$return_val
                                       return(invisible(self))
                                   },
                                   get_istore_k=function() {
-                                      "This function implements the HDF5-API function H5Pget_istore_k."
-                                      "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetIstoreK} for details."
-
                                       res <- .Call("R_H5Pget_istore_k", self$id, request_empty(1), PACKAGE="hdf5r")
                                       if(res$return_val < 0) {
                                           stop("Error retrieving user-block size")
@@ -383,11 +397,29 @@ H5P_FILE_CREATE <-  R6Class("H5P_FILE_CREATE",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_FILE_ACCESS
+#' @rdname H5P_FILE_ACCESS-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_FILE_ACCESS-class]{H5P_FILE_ACCESS}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#'
+#' @section Methods:
+#' \describe{
+#'   \item{\code{new(id = NULL)}}{Create a new class of type \code{\link{H5P_FILE_ACCESS}}
+#'     \strong{Parameters:}
+#'     \describe{
+#'       \item{id}{Internal use only}
+#'     }
+#'   }
+#'   \item{\code{set_cache(rdcc_nslots = 521, rdcc_nbytes = 2^20, rdcc_w0 = 0.75)}}{This function implements the HDF5-API function H5Pset_cache.
+#'     Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetCache} for details.}
+#'   \item{\code{get_cache()}}{This function implements the HDF5-API function H5Pget_cache.
+#'     Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetCache} for details.}
+#' }
+NULL
+
+#' @export
 H5P_FILE_ACCESS <-  R6Class("H5P_FILE_ACCESS",
                               inherit=H5P,
                               public=list(
@@ -434,11 +466,15 @@ H5P_FILE_ACCESS <-  R6Class("H5P_FILE_ACCESS",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_DATASET_CREATE
+#' @rdname H5P_DATASET_CREATE-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_DATASET_CREATE-class]{H5P_DATASET_CREATE}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+NULL
+
+#' @export
 H5P_DATASET_CREATE <- R6Class("H5P_DATASET_CREATE",
                               inherit=H5P,
                               public=list(
@@ -755,11 +791,23 @@ H5P_DATASET_CREATE <- R6Class("H5P_DATASET_CREATE",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_DATASET_ACCESS
+#' @rdname H5P_DATASET_ACCESS-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_DATASET_ACCESS-class]{H5P_DATASET_ACCESS}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#' 
+#' @section Methods:
+#' \describe{
+#' \item{\code{set_chunk_cache(rdcc_nslots = -1, rdcc_nbytes = -1, rdcc_w0 = -1)}}{
+#'   This function implements the HDF5-API function H5Pset_chunk_cache.
+#'   Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetChunkCache} for details.}
+#' \item{\code{get_chunk_cache()}}{This function implements the HDF5-API function H5Pget_chunk_cache. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetChunkCache} for details.}
+#' }
+NULL
+
+#' @export
 H5P_DATASET_ACCESS <- R6Class("H5P_DATASET_ACCESS",
                            inherit=H5P,
                            public=list(
@@ -773,9 +821,6 @@ H5P_DATASET_ACCESS <- R6Class("H5P_DATASET_ACCESS",
                                    super$initialize(id)
                                },
                                set_chunk_cache=function(rdcc_nslots=-1, rdcc_nbytes=-1, rdcc_w0=-1) {
-                                   "This function implements the HDF5-API function H5Pset_chunk_cache."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetChunkCache} for details."
-
                                    herr <- .Call("R_H5Pset_chunk_cache", self$id, rdcc_nslots, rdcc_nbytes, rdcc_w0, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting chunk cache")
@@ -783,9 +828,6 @@ H5P_DATASET_ACCESS <- R6Class("H5P_DATASET_ACCESS",
                                    return(invisible(self))
                                },
                                get_chunk_cache=function() {
-                                   "This function implements the HDF5-API function H5Pget_chunk_cache."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetChunkCache} for details."
-
                                    res <- .Call("R_H5Pget_chunk_cache", self$id, request_empty(1), request_empty(1),
                                                 request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
@@ -802,18 +844,36 @@ H5P_DATASET_ACCESS <- R6Class("H5P_DATASET_ACCESS",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_DATASET_XFER
+#' @rdname H5P_DATASET_XFER-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_DATASET_XFER-class]{H5P_DATASET_XFER}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#' 
+#' @section Methods:
+#' \describe{
+#'   \item{\code{new(id = NULL)}}{Create a new class of type \code{\link{H5P_DATASET_XFER}}
+#'     \strong{Parameters:}
+#'     \describe{
+#'       \item{id}{Internal use only}
+#'     }
+#'   }
+#'   \item{\code{set_buffer(size = 2^20)}}{This function implements the HDF5-API function H5Pset_buffer. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetBuffer} for details.}
+#'   \item{\code{set_edc_check(check = h5const$H5Z_ENABLE_EDC)}}{This function implements the HDF5-API function H5Pset_edc_check. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetEdcCheck} for details.}
+#'   \item{\code{get_edc_check()}}{This function implements the HDF5-API function H5Pget_edc_check. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetEdcCheck} for details.}
+#'   \item{\code{set_hyper_vector_size(size = 2^10)}}{This function implements the HDF5-API function H5Pset_hyper_vector_size. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetHyperVectorSize} for details.}
+#'   \item{\code{get_hyper_vector_size()}}{This function implements the HDF5-API function H5Pget_hyper_vector_size. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetHyperVectorSize} for details.}
+#'   \item{\code{set_btree_ratios(left, middle, right)}}{This function implements the HDF5-API function H5Pset_btree_ratios. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetBtreeRatios} for details.}
+#'   \item{\code{get_btree_ratios()}}{This function implements the HDF5-API function H5Pget_btree_ratios. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetBtreeRatios} for details.}
+#' }
+NULL
+
+#' @export
 H5P_DATASET_XFER <- R6Class("H5P_DATASET_XFER",
                            inherit=H5P,
                            public=list(
                                initialize=function(id=NULL) {
-                                   "Create a new class of type \\code{\\link{H5P_DATASET_XFER}}"
-                                   "@param id Internal use only"
-
                                    if(is.null(id)) {
                                        id <- .Call("R_H5Pcreate", h5const$H5P_DATASET_XFER, PACKAGE="hdf5r")$return_val
                                        if(id < 0) {
@@ -823,9 +883,6 @@ H5P_DATASET_XFER <- R6Class("H5P_DATASET_XFER",
                                    super$initialize(id)
                                },
                                set_buffer=function(size=2^20) {
-                                   "This function implements the HDF5-API function H5Pset_buffer."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetBuffer} for details."
-
                                    tconv <- raw(0)
                                    bkg <- raw(0)
                                    herr <- .Call("R_H5Pset_buffer", self$id, size, tconv, bkg, FALSE, FALSE, PACKAGE="hdf5r")$return_val
@@ -835,9 +892,6 @@ H5P_DATASET_XFER <- R6Class("H5P_DATASET_XFER",
                                    return(invisible(self))
                                },
                                set_edc_check=function(check=h5const$H5Z_ENABLE_EDC) {
-                                   "This function implements the HDF5-API function H5Pset_edc_check."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetEdcCheck} for details."
-
                                    herr <- .Call("R_H5Pset_edc_check", self$id, check, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting edc check")
@@ -845,9 +899,6 @@ H5P_DATASET_XFER <- R6Class("H5P_DATASET_XFER",
                                    return(invisible(self))
                                },
                                get_edc_check=function() {
-                                   "This function implements the HDF5-API function H5Pget_edc_check."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetEdcCheck} for details."
-
                                    check <- .Call("R_H5Pget_edc_check", self$id, PACKAGE="hdf5r")$return_val
                                    if(check < 0) {
                                        stop("Error getting edc check")
@@ -855,9 +906,6 @@ H5P_DATASET_XFER <- R6Class("H5P_DATASET_XFER",
                                    return(check)
                                },
                                set_hyper_vector_size=function(size=2^10) {
-                                   "This function implements the HDF5-API function H5Pset_hyper_vector_size."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetHyperVectorSize} for details."
-
                                    herr <- .Call("R_H5Pset_hyper_vector_size", self$id, size, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting edc check")
@@ -865,9 +913,6 @@ H5P_DATASET_XFER <- R6Class("H5P_DATASET_XFER",
                                    return(invisible(self))
                                },
                                get_hyper_vector_size=function() {
-                                   "This function implements the HDF5-API function H5Pget_hyper_vector_size."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetHyperVectorSize} for details."
-
                                    res <- .Call("R_H5Pget_hyper_vector_size", self$id, request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting hyper vector size")
@@ -875,9 +920,6 @@ H5P_DATASET_XFER <- R6Class("H5P_DATASET_XFER",
                                    return(res$size)
                                },
                                set_btree_ratios=function(left, middle, right) {
-                                   "This function implements the HDF5-API function H5Pset_btree_ratios."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetBtreeRatios} for details."
-
                                    herr <- .Call("R_H5Pset_btree_ratios", self$id, left, middle, right, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting btree ratios")
@@ -885,9 +927,6 @@ H5P_DATASET_XFER <- R6Class("H5P_DATASET_XFER",
                                    return(invisible(self))
                                },
                                get_btree_ratios=function() {
-                                   "This function implements the HDF5-API function H5Pget_btree_ratios."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetBtreeRatios} for details."
-
                                    res <- .Call("R_H5Pget_btree_ratios", self$id, request_empty(1), request_empty(1),
                                                 request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
@@ -906,18 +945,32 @@ H5P_DATASET_XFER <- R6Class("H5P_DATASET_XFER",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_LINK_CREATE-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_LINK_CREATE-class]{H5P_LINK_CREATE}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#' 
+#' @section Methods:
+#'   \describe{
+#'     \item{\code{new(id = NULL)}}{Create a new class of type \code{\link{H5P_LINK_CREATE}}
+#'       \strong{Parameters:}
+#'       \describe{
+#'         \item{id}{Internal use only}
+#'       }
+#'     }
+#'     \item{\code{set_char_encoding(encoding = h5const$H5T_CSET_UTF8)}}{This function implements the HDF5-API function H5Pset_char_encoding. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetCharEncoding} for details.}
+#'     \item{\code{get_char_encoding()}}{This function implements the HDF5-API function H5Pget_char_encoding. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetCharEncoding} for details.}
+#'     \item{\code{set_create_intermediate_group(create = TRUE)}}{This function implements the HDF5-API function H5Pset_create_intermediate_group. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetCreateIntermediateGroup} for details.}
+#'     \item{\code{get_create_intermediate_group()}}{This function implements the HDF5-API function H5Pget_create_intermediate_group. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetCreateIntermediateGroup} for details.}
+#'   }
+NULL
+
+#' @export
 H5P_LINK_CREATE <- R6Class("H5P_LINK_CREATE",
                            inherit=H5P,
                            public=list(
                                initialize=function(id=NULL) {
-                                   "Create a new class of type \\code{\\link{H5P_LINK_CREATE}}"
-                                   "@param id Internal use only"
-
                                    if(is.null(id)) {
                                        id <- .Call("R_H5Pcreate", h5const$H5P_LINK_CREATE, PACKAGE="hdf5r")$return_val
                                        if(id < 0) {
@@ -927,9 +980,6 @@ H5P_LINK_CREATE <- R6Class("H5P_LINK_CREATE",
                                    super$initialize(id)
                                },
                                set_char_encoding=function(encoding=h5const$H5T_CSET_UTF8) {
-                                   "This function implements the HDF5-API function H5Pset_char_encoding."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetCharEncoding} for details."
-
                                    herr <- .Call("R_H5Pset_char_encoding", self$id, encoding, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting char encoding")
@@ -937,9 +987,6 @@ H5P_LINK_CREATE <- R6Class("H5P_LINK_CREATE",
                                    return(invisible(self))
                                },
                                get_char_encoding=function() {
-                                   "This function implements the HDF5-API function H5Pget_char_encoding."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetCharEncoding} for details."
-
                                    res <- .Call("R_H5Pget_char_encoding", self$id, request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting encoding")
@@ -947,9 +994,6 @@ H5P_LINK_CREATE <- R6Class("H5P_LINK_CREATE",
                                    return(res$encoding)
                                },
                                set_create_intermediate_group=function(create=TRUE) {
-                                   "This function implements the HDF5-API function H5Pset_create_intermediate_group."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetCreateIntermediateGroup} for details."
-
                                    herr <- .Call("R_H5Pset_create_intermediate_group", self$id, create, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting flag for creating intermediate groups")
@@ -957,9 +1001,6 @@ H5P_LINK_CREATE <- R6Class("H5P_LINK_CREATE",
                                    return(invisible(self))
                                },
                                get_create_intermediate_group=function() {
-                                   "This function implements the HDF5-API function H5Pget_create_intermediate_group."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetCreateIntermediateGroup} for details."
-
                                    res <- .Call("R_H5Pget_create_intermediate_group", self$id, request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting intermediate group creation flag")
@@ -975,18 +1016,61 @@ H5P_LINK_CREATE <- R6Class("H5P_LINK_CREATE",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_LINK_ACCESS
+#' @rdname H5P_LINK_ACCESS-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_LINK_ACCESS-class]{H5P_LINK_ACCESS}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#' 
+#' @section Methods:
+#' \describe{
+#' \item{\code{new(id = NULL)}}{
+#' 
+#' Create a new class of type \code{\link{H5P_LINK_ACCESS}}
+#' 
+#' \strong{Parameters:}
+#' \describe{
+#' \item{id}{Internal use only}
+#' }}
+#' 
+#' \item{\code{set_nlinks(nlinks)}}{
+#' 
+#' This function implements the HDF5-API function H5Pset_nlinks.
+#' Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetNlinks} for details.}
+#' 
+#' \item{\code{get_nlinks()}}{
+#' 
+#' This function implements the HDF5-API function H5Pget_nlinks.
+#' Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetNlinks} for details.}
+#' 
+#' \item{\code{set_elink_prefix(elink_prefix)}}{
+#' 
+#' This function implements the HDF5-API function H5Pset_elink_prefix.
+#' Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetElinkPrefix} for details.}
+#' 
+#' \item{\code{get_elink_prefix()}}{
+#' 
+#' This function implements the HDF5-API function H5Pget_elink_prefix.
+#' Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetElinkPrefix} for details.}
+#' 
+#' \item{\code{set_elink_acc_flags(elink_acc_flags = h5const$H5F_ACC_RDWR)}}{
+#' 
+#' This function implements the HDF5-API function H5Pset_elink_acc_flags.
+#' Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetElinkAccFlags} for details.}
+#' 
+#' \item{\code{get_elink_acc_flags()}}{
+#' 
+#' This function implements the HDF5-API function H5Pget_elink_acc_flags.
+#' Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetElinkAccFlags} for details.}
+#' }
+NULL
+
+#' @export
 H5P_LINK_ACCESS <- R6Class("H5P_LINK_ACCESS",
                            inherit=H5P,
                            public=list(
                                initialize=function(id=NULL) {
-                                   "Create a new class of type \\code{\\link{H5P_LINK_ACCESS}}"
-                                   "@param id Internal use only"
-
                                    if(is.null(id)) {
                                        id <- .Call("R_H5Pcreate", h5const$H5P_LINK_ACCESS, PACKAGE="hdf5r")$return_val
                                        if(id < 0) {
@@ -996,9 +1080,6 @@ H5P_LINK_ACCESS <- R6Class("H5P_LINK_ACCESS",
                                    super$initialize(id)
                                },
                                set_nlinks=function(nlinks) {
-                                   "This function implements the HDF5-API function H5Pset_nlinks."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetNlinks} for details."
-
                                    herr <- .Call("R_H5Pset_nlinks", self$id, nlinks, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting nlinks")
@@ -1006,9 +1087,6 @@ H5P_LINK_ACCESS <- R6Class("H5P_LINK_ACCESS",
                                    return(invisible(self))
                                },
                                get_nlinks=function() {
-                                   "This function implements the HDF5-API function H5Pget_nlinks."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetNlinks} for details."
-
                                    res <- .Call("R_H5Pget_nlinks", self$id, request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting nlinks")
@@ -1016,9 +1094,6 @@ H5P_LINK_ACCESS <- R6Class("H5P_LINK_ACCESS",
                                    return(res$nlinks)
                                },
                                set_elink_prefix=function(elink_prefix) {
-                                   "This function implements the HDF5-API function H5Pset_elink_prefix."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetElinkPrefix} for details."
-
                                    herr <- .Call("R_H5Pset_elink_prefix", self$id, elink_prefix, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting elink_prefix")
@@ -1026,9 +1101,6 @@ H5P_LINK_ACCESS <- R6Class("H5P_LINK_ACCESS",
                                    return(invisible(self))
                                },
                                get_elink_prefix=function() {
-                                   "This function implements the HDF5-API function H5Pget_elink_prefix."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetElinkPrefix} for details."
-
                                    prefix_size <- .Call("R_H5Pget_elink_prefix", self$id, character(0), 0, PACKAGE="hdf5r")$return_val
                                    if(prefix_size < 0) {
                                        stop("Error getting prefix size")
@@ -1041,9 +1113,6 @@ H5P_LINK_ACCESS <- R6Class("H5P_LINK_ACCESS",
                                    return(res$prefix)
                                },
                                set_elink_acc_flags=function(elink_acc_flags=h5const$H5F_ACC_RDWR) {
-                                   "This function implements the HDF5-API function H5Pset_elink_acc_flags."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetElinkAccFlags} for details."
-
                                    herr <- .Call("R_H5Pset_elink_acc_flags", self$id, elink_acc_flags, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting elink_acc_flags")
@@ -1051,9 +1120,6 @@ H5P_LINK_ACCESS <- R6Class("H5P_LINK_ACCESS",
                                    return(invisible(self))
                                },
                                get_elink_acc_flags=function() {
-                                   "This function implements the HDF5-API function H5Pget_elink_acc_flags."
-                                   "Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetElinkAccFlags} for details."
-
                                    res <- .Call("R_H5Pget_elink_acc_flags", self$id, request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting elink_acc_flags")
@@ -1072,18 +1138,55 @@ H5P_LINK_ACCESS <- R6Class("H5P_LINK_ACCESS",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_OBJECT_CREATE
+#' @rdname H5P_OBJECT_CREATE-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_OBJECT_CREATE-class]{H5P_OBJECT_CREATE}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#' 
+#' @section Methods:
+#' \describe{
+#' \item{\code{new(id = NULL)}}{
+#' 
+#' Create a new class of type \code{\link{H5P_OBJECT_CREATE}}
+#' 
+#' \strong{Parameters:}
+#' \describe{
+#' \item{id}{Internal use only}
+#' }}
+#' 
+#' \item{\code{set_obj_track_times(track_times = TRUE)}}{
+#' 
+#' This function implements the HDF5-API function H5Pset_obj_track_times. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetObjTrackTimes} for details.}
+#' 
+#' \item{\code{get_obj_track_times()}}{
+#' 
+#' This function implements the HDF5-API function H5Pget_obj_track_times. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetObjTrackTimes} for details.}
+#' 
+#' \item{\code{set_attr_phase_change(max_compact, min_dense)}}{
+#' 
+#' This function implements the HDF5-API function H5Pset_attr_phase_change. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetAttrPhaseChange} for details.}
+#' 
+#' \item{\code{get_attr_phase_change()}}{
+#' 
+#' This function implements the HDF5-API function H5Pget_attr_phase_change. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetAttrPhaseChange} for details.}
+#' 
+#' \item{\code{set_attr_creation_order(crt_order_flags = 0)}}{
+#' 
+#' This function implements the HDF5-API function H5Pset_attr_creation_order. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetAttrCreationOrder} for details.}
+#' 
+#' \item{\code{get_attr_creation_order()}}{
+#' 
+#' This function implements the HDF5-API function H5Pget_attr_creation_order. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetAttrCreationOrder} for details.}
+#' }
+NULL
+
+#' @export
 H5P_OBJECT_CREATE <- R6Class("H5P_OBJECT_CREATE",
                            inherit=H5P,
                            public=list(
                                initialize=function(id=NULL) {
-                                   "Create a new class of type \\code{\\link{H5P_OBJECT_CREATE}}"
-                                   "@param id Internal use only"
-
                                    if(is.null(id)) {
                                        id <- .Call("R_H5Pcreate", h5const$H5P_OBJECT_CREATE, PACKAGE="hdf5r")$return_val
                                        if(id < 0) {
@@ -1093,8 +1196,6 @@ H5P_OBJECT_CREATE <- R6Class("H5P_OBJECT_CREATE",
                                    super$initialize(id)
                                },
                                set_obj_track_times=function(track_times=TRUE) {
-                                   "This function implements the HDF5-API function H5Pset_obj_track_times. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetObjTrackTimes} for details."
-
                                    herr <- .Call("R_H5Pset_obj_track_times", self$id, track_times, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting track_times")
@@ -1102,8 +1203,6 @@ H5P_OBJECT_CREATE <- R6Class("H5P_OBJECT_CREATE",
                                    return(invisible(self))
                                },
                                get_obj_track_times=function() {
-                                   "This function implements the HDF5-API function H5Pget_obj_track_times. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetObjTrackTimes} for details."
-
                                    res <- .Call("R_H5Pget_obj_track_times", self$id, request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting track_times")
@@ -1111,8 +1210,6 @@ H5P_OBJECT_CREATE <- R6Class("H5P_OBJECT_CREATE",
                                    return(as.logical(res$track_times))
                                },
                                set_attr_phase_change=function(max_compact, min_dense) {
-                                   "This function implements the HDF5-API function H5Pset_attr_phase_change. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetAttrPhaseChange} for details."
-
                                    herr <- .Call("R_H5Pset_attr_phase_change", self$id, max_compact, min_dense, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting attribute phase change")
@@ -1120,8 +1217,6 @@ H5P_OBJECT_CREATE <- R6Class("H5P_OBJECT_CREATE",
                                    return(invisible(self))
                                },
                                get_attr_phase_change=function() {
-                                   "This function implements the HDF5-API function H5Pget_attr_phase_change. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetAttrPhaseChange} for details."
-
                                    res <- .Call("R_H5Pget_attr_phase_change", self$id, request_empty(1), request_empty(1),PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting attribute phase change")
@@ -1129,8 +1224,6 @@ H5P_OBJECT_CREATE <- R6Class("H5P_OBJECT_CREATE",
                                    return(list(max_compact=res$max_compact, min_dense=res$min_dense))
                                },
                                set_attr_creation_order=function(crt_order_flags=0) {
-                                   "This function implements the HDF5-API function H5Pset_attr_creation_order. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetAttrCreationOrder} for details."
-
                                    herr <- .Call("R_H5Pset_attr_creation_order", self$id, crt_order_flags, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting attribute creation order")
@@ -1138,8 +1231,6 @@ H5P_OBJECT_CREATE <- R6Class("H5P_OBJECT_CREATE",
                                    return(invisible(self))
                                },
                                get_attr_creation_order=function() {
-                                   "This function implements the HDF5-API function H5Pget_attr_creation_order. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetAttrCreationOrder} for details."
-
                                    res <- .Call("R_H5Pget_attr_creation_order", self$id, request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting attribute creation order")
@@ -1156,18 +1247,39 @@ H5P_OBJECT_CREATE <- R6Class("H5P_OBJECT_CREATE",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_OBJECT_COPY
+#' @rdname H5P_OBJECT_COPY-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_OBJECT_COPY-class]{H5P_OBJECT_COPY}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#'
+#' @section Methods:
+#' \describe{
+#' \item{\code{new(id = NULL)}}{
+#' 
+#' Create a new class of type \code{\link{H5P_OBJECT_COPY}}
+#' 
+#' \strong{Parameters:}
+#' \describe{
+#' \item{id}{Internal use only}
+#' }}
+#' 
+#' \item{\code{set_copy_obj(copy_options = 0)}}{
+#' 
+#' This function implements the HDF5-API function H5Pset_copy_object. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetCopyObject} for details.}
+#' 
+#' \item{\code{get_copy_obj()}}{
+#' 
+#' This function implements the HDF5-API function H5Pget_copy_object. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetCopyObject} for details.}
+#' }
+NULL
+
+#' @export
 H5P_OBJECT_COPY <- R6Class("H5P_OBJECT_COPY",
                            inherit=H5P,
                            public=list(
                                initialize=function(id=NULL) {
-                                   "Create a new class of type \\code{\\link{H5P_OBJECT_COPY}}"
-                                      "@param id Internal use only"
-
                                    if(is.null(id)) {
                                        id <- .Call("R_H5Pcreate", h5const$H5P_OBJECT_COPY, PACKAGE="hdf5r")$return_val
                                        if(id < 0) {
@@ -1177,8 +1289,6 @@ H5P_OBJECT_COPY <- R6Class("H5P_OBJECT_COPY",
                                    super$initialize(id)
                                },
                                set_copy_obj=function(copy_options=0) {
-                                   "This function implements the HDF5-API function H5Pset_copy_object. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetCopyObject} for details."
-
                                    herr <- .Call("R_H5Pset_copy_object", self$id, copy_options, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting attribute creation order")
@@ -1186,8 +1296,6 @@ H5P_OBJECT_COPY <- R6Class("H5P_OBJECT_COPY",
                                    return(invisible(self))
                                },
                                get_copy_obj=function() {
-                                   "This function implements the HDF5-API function H5Pget_copy_object. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetCopyObject} for details."
-
                                    res <- .Call("R_H5Pget_copy_object", self$id, request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting attribute creation order")
@@ -1204,18 +1312,28 @@ H5P_OBJECT_COPY <- R6Class("H5P_OBJECT_COPY",
 #'
 #' It inherits all functions of the \code{\link{H5P-class}}.
 #' @docType class
+#' @name H5P_ATTRIBUTE_CREATE
+#' @rdname H5P_ATTRIBUTE_CREATE-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5P_ATTRIBUTE_CREATE-class]{H5P_ATTRIBUTE_CREATE}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview, \code{\link[=H5P-class]{H5P}}
+#' 
+#' @section Methods:
+#' \describe{
+#'   \item{\code{new(id = NULL)}}{Create a new class of type \code{\link{H5P_ATTRIBUTE_CREATE}}
+#'     \strong{Parameters:}
+#'     \describe{\item{id}{Internal use only}}}
+#'   \item{\code{set_char_encoding(encoding = h5const$H5T_CSET_UTF8)}}{This function implements the HDF5-API function H5Pset_char_encoding. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetCharEncoding} for details.}
+#'   \item{\code{get_char_encoding()}}{This function implements the HDF5-API function H5Pget_char_encoding. Please see the documentation at \url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetCharEncoding} for details.}
+#' }
+NULL
+
+#' @export
 H5P_ATTRIBUTE_CREATE <- R6Class("H5P_ATTRIBUTE_CREATE",
                            inherit=H5P,
                            public=list(
                                initialize=function(id=NULL) {
-                                   "Create a new class of type \\code{\\link{H5P_ATTRIBUTE_CREATE}}"
-                                   "@param id Internal use only"
-
                                    if(is.null(id)) {
                                        id <- .Call("R_H5Pcreate", h5const$H5P_ATTRIBUTE_CREATE, PACKAGE="hdf5r")$return_val
                                        if(id < 0) {
@@ -1225,8 +1343,6 @@ H5P_ATTRIBUTE_CREATE <- R6Class("H5P_ATTRIBUTE_CREATE",
                                    super$initialize(id)
                                },
                                set_char_encoding=function(encoding=h5const$H5T_CSET_UTF8) {
-                                   "This function implements the HDF5-API function H5Pset_char_encoding. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetCharEncoding} for details."
-
                                    herr <- .Call("R_H5Pset_char_encoding", self$id, encoding, PACKAGE="hdf5r")$return_val
                                    if(herr < 0) {
                                        stop("Error setting char encoding")
@@ -1234,8 +1350,6 @@ H5P_ATTRIBUTE_CREATE <- R6Class("H5P_ATTRIBUTE_CREATE",
                                    return(invisible(self))
                                },
                                get_char_encoding=function() {
-                                   "This function implements the HDF5-API function H5Pget_char_encoding. Please see the documentation at \\url{https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetCharEncoding} for details."
-
                                    res <- .Call("R_H5Pget_char_encoding", self$id, request_empty(1), PACKAGE="hdf5r")
                                    if(res$return_val < 0) {
                                        stop("Error getting encoding")

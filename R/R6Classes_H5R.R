@@ -32,13 +32,17 @@ ref_obj_size <- new.env()
 #' Class for HDF5 Reference datatypes. 
 #'
 #' \code{H5R} is only the common, class, and is never used. User should not create objects of this
-#' class by themselves and instead use the \code{create_reference} methods of \code{H5D}, \code{H5Group}, \code{H5File} classes.
+#' class by themselves and instead use the \code{create_reference} methods of \code{\link{H5D}}, \code{\link{H5Group}}, \code{\link{H5File}} classes.
 #' @docType class
+#' @name H5R
+#' @rdname H5R-class
 #' @importFrom R6 R6Class
 #' @return Object of class \code{\link[=H5R-class]{H5R}}.
-#' @export
 #' @author Holger Hoefling
 #' @seealso H5Class_overview
+NULL
+
+#' @export
 H5R <- R6Class("H5R",
                inherit=H5RefClass,
                public=list(
@@ -342,8 +346,8 @@ R6_set_list_of_items(H5R, "public", ref_func_clone_public, overwrite=TRUE)
 
 
 
-##' @rdname H5R-class
-##' @export
+#' @rdname H5R-class
+#' @export
 H5R_OBJECT <- R6Class("H5R_OBJECT",
                       inherit=H5R,
                       public=list(
@@ -403,8 +407,8 @@ H5R_OBJECT <- R6Class("H5R_OBJECT",
                       )
 
 
-##' @rdname H5R-class
-##' @export
+#' @rdname H5R-class
+#' @export
 H5R_DATASET_REGION <- R6Class("H5R_DATASET_REGION",
                       inherit=H5R,
                       public=list(
@@ -496,15 +500,15 @@ H5R_DATASET_REGION <- R6Class("H5R_DATASET_REGION",
 
 
 
-##' Compare the ids of objects
-##'
-##' When several \code{H5RefClass} objects are passed in
-##' @title Compare the ids of objects
-##' @param ... Any \code{H5RefClass} objects
-##' @return Logical - are all ids the same of the objects passed in
-##' @author Holger Hoefling
-##' @keywords internal
-##' @importFrom bit64 integer64
+#' Compare the ids of objects
+#'
+#' When several \code{H5RefClass} objects are passed in
+#' @title Compare the ids of objects
+#' @param ... Any \code{H5RefClass} objects
+#' @return Logical - are all ids the same of the objects passed in
+#' @author Holger Hoefling
+#' @keywords internal
+#' @importFrom bit64 integer64
 equal_id_check <- function(...) {
     objs <- list(...) 
 
@@ -529,65 +533,65 @@ equal_id_check <- function(...) {
 
 ## the purpose of the base class is to provide the functionality so that it can behave like a vector, matrix or array
 
-##' Checks if object is of a HDF5-Reference class
-##'
-##' Simple check if it inherits from \code{H5R}, \code{H5R_OBJECT} or \code{H5R_DATSET_REGION}.
-##' @title Checks if object is of a HDF5-Reference class
-##' @param x The object to check
-##' @return Logical 
-##' @author Holger Hoefling
-##' @export
+#' Checks if object is of a HDF5-Reference class
+#'
+#' Simple check if it inherits from \code{H5R}, \code{H5R_OBJECT} or \code{H5R_DATSET_REGION}.
+#' @title Checks if object is of a HDF5-Reference class
+#' @param x The object to check
+#' @return Logical 
+#' @author Holger Hoefling
+#' @export
 is.H5R <- function(x) inherits(x, "H5R")
 
-##' @rdname is.H5R
-##' @export
+#' @rdname is.H5R
+#' @export
 is.H5R_OBJECT <- function(x) inherits(x, "H5R_OBJECT")
 
-##' @rdname is.H5R
-##' @export
+#' @rdname is.H5R
+#' @export
 is.H5R_DATASET_REGION <- function(x) inherits(x, "H5R_DATASET_REGION")
 
 
-##' Return the name-vector of an object
-##'
-##' Returns the name vector of the object
-##' @title Return the name-vector of an object
-##' @param x The object to get the names of
-##' @return A character vector
-##' @author Holger Hoefling
-##' @export
+#' Return the name-vector of an object
+#'
+#' Returns the name vector of the object
+#' @title Return the name-vector of an object
+#' @param x The object to get the names of
+#' @return A character vector
+#' @author Holger Hoefling
+#' @export
 names.H5R <- function(x) {
     return(x$names)
 }
 
 
-##' Retrieve length of an object
-##'
-##' Returns the slot that describes the length of the object
-##' @title Retrieve length of an object
-##' @param x The object to get the length of
-##' @return Length of the object 
-##' @author Holger Hoefling
-##' @export
+#' Retrieve length of an object
+#'
+#' Returns the slot that describes the length of the object
+#' @title Retrieve length of an object
+#' @param x The object to get the length of
+#' @return Length of the object 
+#' @author Holger Hoefling
+#' @export
 length.H5R <- function(x) {
     return(x$length)
 }
 
 
-##' Subset or assign into a vector/array
-##'
-##' The standard array/vector subsetting functions
-##' @title Subset or assign into a vector/array
-##' @param x The object to subset
-##' @param i First dimension
-##' @param j Second dimension
-##' @param ... Any other dimensions
-##' @param drop Should dimensions of size 1 be dropped; LOGICAL
-##' @param value The value in an assignment
-##' @return A corresponding object that is the subset of the vector
-##' @author Holger Hoefling
-##' @export
-##' @rdname subset
+#' Subset or assign into a vector/array
+#'
+#' The standard array/vector subsetting functions
+#' @title Subset or assign into a vector/array
+#' @param x The object to subset
+#' @param i First dimension
+#' @param j Second dimension
+#' @param ... Any other dimensions
+#' @param drop Should dimensions of size 1 be dropped; LOGICAL
+#' @param value The value in an assignment
+#' @return A corresponding object that is the subset of the vector
+#' @author Holger Hoefling
+#' @export
+#' @rdname subset
 '[.H5R' <- function(x, i, j, ..., drop=TRUE) {
     ## take the number of arguments and substract 2 (the functions and x)
     mdrop <- missing(drop)
@@ -603,8 +607,8 @@ length.H5R <- function(x) {
 }
 
 
-##' @export
-##' @rdname subset
+#' @export
+#' @rdname subset
 '[<-.H5R' <- function(x, i, ..., value) {
     ## take the number of arguments and substract 3 (the functions, x, and value)
     dim_index <- eval(substitute(alist(i, ...)))
@@ -616,29 +620,29 @@ length.H5R <- function(x) {
 
 ## Not possible to include; interferes with the clone method sind R6 2.1.3
 ## as objects in the clone method are now accessed through [[
-## ##' @export
-## ##' @rdname subset
+## #' @export
+## #' @rdname subset
 ## '[[.H5R' <- function(x, i, ..., exact=TRUE) {
 ##     return(x$subset2_read(i, exact=exact))
 ## }
 
 
-## ##' @export
-## ##' @rdname subset
+## #' @export
+## #' @rdname subset
 ## '[[<-.H5R' <- function(x, i, ..., exact=TRUE, value) {
 ##     return(x$subset2_assign(i, exact=exact, value=value))
 ## }
 
-##' Concatenate HDF5-Reference objects
-##'
-##' Concatenates HDF5-Reference objects; also concatenates the names, replacing empty strings
-##' if the names are \code{NULL}.
-##' @title Concatenate HDF5-Reference objects
-##' @param ... The objects to concatenate; All have to be references with respect to the same class
-##' @param recursive Ignored here
-##' @return An object of the same class, with all components concatenated
-##' @author Holger Hoefling
-##' @export
+#' Concatenate HDF5-Reference objects
+#'
+#' Concatenates HDF5-Reference objects; also concatenates the names, replacing empty strings
+#' if the names are \code{NULL}.
+#' @title Concatenate HDF5-Reference objects
+#' @param ... The objects to concatenate; All have to be references with respect to the same class
+#' @param recursive Ignored here
+#' @return An object of the same class, with all components concatenated
+#' @author Holger Hoefling
+#' @export
 c.H5R <- function(..., recursive=FALSE) {
     if(recursive) {
         stop("recursive=TRUE currently not supported") 
@@ -680,21 +684,21 @@ c.H5R <- function(..., recursive=FALSE) {
     return(res)
 }
 
-##' Get/Assign dimension of an object
-##'
-##' Get/Assign the dimensionality of the objects.
-##' @title Get/Assign dimension of an object
-##' @param x The object to get/assign dimensions
-##' @param value A vector specifiying the dimensions of the object
-##' @return A vector with the dimensions
-##' @author Holger Hoefling
-##' @export
+#' Get/Assign dimension of an object
+#'
+#' Get/Assign the dimensionality of the objects.
+#' @title Get/Assign dimension of an object
+#' @param x The object to get/assign dimensions
+#' @param value A vector specifiying the dimensions of the object
+#' @return A vector with the dimensions
+#' @author Holger Hoefling
+#' @export
 dim.H5R <- function(x) {
     return(x$dim)
 }
 
-##' @export
-##' @rdname dim.H5R
+#' @export
+#' @rdname dim.H5R
 'dim<-.H5R' <- function(x, value) {
     x$dim <- value
     return(x)
@@ -708,49 +712,49 @@ set_ref.H5R <- function(x, value) {
 }
 
 
-##' Transpose a HDF5-Reference matrix
-##'
-##' Clones the matrix and returns a transpose of the clone
-##' @title Transpose a HDF5-Reference matrix
-##' @param x The matrix to transpose; will be cloned
-##' @return A transposed version of the HDF5-Reference matrix; a clone
-##' @author Holger Hoefling
-##' @export
+#' Transpose a HDF5-Reference matrix
+#'
+#' Clones the matrix and returns a transpose of the clone
+#' @title Transpose a HDF5-Reference matrix
+#' @param x The matrix to transpose; will be cloned
+#' @return A transposed version of the HDF5-Reference matrix; a clone
+#' @author Holger Hoefling
+#' @export
 t.H5R <- function(x) {
     return(x$clone()$t())
 }
 
 
-##' Get/set dimnames
-##'
-##' Get/set the dimnames of an \code{H5R} object
-##' @title Get/set dimnames
-##' @param x The object to get/set the dimnames of
-##' @param value The dimnames to set. Has to be a list of character vectors of length equal to the rank of the array
-##' @return A list of length equal to the rank of the array, with each element being a character vector 
-##' @author Holger Hoefling
-##' @export
+#' Get/set dimnames
+#'
+#' Get/set the dimnames of an \code{H5R} object
+#' @title Get/set dimnames
+#' @param x The object to get/set the dimnames of
+#' @param value The dimnames to set. Has to be a list of character vectors of length equal to the rank of the array
+#' @return A list of length equal to the rank of the array, with each element being a character vector 
+#' @author Holger Hoefling
+#' @export
 dimnames.H5R <- function(x) {
     return(x$dimnames)
 }
 
-##' @rdname dimnames.H5R
-##' @export
+#' @rdname dimnames.H5R
+#' @export
 'dimnames<-.H5R' <- function(x, value) {
     x$dimnames <- value
     return(x)
 }
 
 
-##' cbind/rbind of HDF5-Reference classes
-##'
-##' cbind/rbind functionality for HDF5-Reference classes
-##' @title cbind/rbind of HDF5-Reference classes
-##' @param ... The objects to put together by row/column
-##' @param deparse.level Has to be 1; otherwise ignored
-##' @return An HDF5-Reference object that is the result of binding the rows/columns of the arrays
-##' @author Holger Hoefling
-##' @export
+#' cbind/rbind of HDF5-Reference classes
+#'
+#' cbind/rbind functionality for HDF5-Reference classes
+#' @title cbind/rbind of HDF5-Reference classes
+#' @param ... The objects to put together by row/column
+#' @param deparse.level Has to be 1; otherwise ignored
+#' @return An HDF5-Reference object that is the result of binding the rows/columns of the arrays
+#' @author Holger Hoefling
+#' @export
 cbind.H5R <- function(..., deparse.level=1) {
     if(deparse.level > 1) {
         stop("deparse.level > 1 currently not supported")
@@ -806,8 +810,8 @@ cbind.H5R <- function(..., deparse.level=1) {
     return(res)
 }
 
-##' @rdname cbind.H5R
-##' @export
+#' @rdname cbind.H5R
+#' @export
 rbind.H5R <- function(..., deparse.level=1) {
     if(deparse.level > 1) {
         stop("deparse.level > 1 currently not supported")
@@ -827,49 +831,49 @@ rbind.H5R <- function(..., deparse.level=1) {
 }
 
 
-##' Printing of an object of class \code{h5R}
-##'
-##' Rudimentary printing of information of the object, mainly its length
-##' @title Printing of an object of class \code{h5R}
-##' @param x The object to print
-##' @param ... Ignored
-##' @return The printed text as an invisible character vector
-##' @author Holger Hoefling
-##' @export
+#' Printing of an object of class \code{h5R}
+#'
+#' Rudimentary printing of information of the object, mainly its length
+#' @title Printing of an object of class \code{h5R}
+#' @param x The object to print
+#' @param ... Ignored
+#' @return The printed text as an invisible character vector
+#' @author Holger Hoefling
+#' @export
 print.H5R <- function(x, ...) {
     cat(class(x)[1], " of length ", x$length, "\n")
 }
 
 
-##' Formatting of an H5R object
-##'
-##' Formatting of H5R objects
-##' @title Formatting of an H5R object
-##' @param x The object to format
-##' @param ... ignored
-##' @return Character vector with the class names in angle-brackets
-##' @author Holger Hoefling
-##' @export
+#' Formatting of an H5R object
+#'
+#' Formatting of H5R objects
+#' @title Formatting of an H5R object
+#' @param x The object to format
+#' @param ... ignored
+#' @return Character vector with the class names in angle-brackets
+#' @author Holger Hoefling
+#' @export
 format.H5R <- function(x, ...) {
     rep(paste0("<", class(x)[1], ">"), x$length)
 }
 
-##' Coerce an \code{H5R} object to a data.frame
-##'
-##' Coerce an \code{H5R} object to a data.frame
-##' @title Coerce an \code{H5R} object to a data.frame
-##' @param x The \code{H5R} object to coerce to a data-frame
-##' @param row.names \code{NULL} or a character vector giving the row names for the
-##' data frame.  Missing values are not allowed.
-##' @param optional logical. If \code{TRUE}, setting row names and converting column
-##' names (to syntactic names: see \code{make.names}) is optional.
-##' @param ... additional arguments to be passed to or from methods.
-##' @param nm The column names to use
-##' @param width.cutoff ignored
-##' @param collapse ignored
-##' @return A data frame  
-##' @author Holger Hoefling
-##' @export
+#' Coerce an \code{H5R} object to a data.frame
+#'
+#' Coerce an \code{H5R} object to a data.frame
+#' @title Coerce an \code{H5R} object to a data.frame
+#' @param x The \code{H5R} object to coerce to a data-frame
+#' @param row.names \code{NULL} or a character vector giving the row names for the
+#' data frame.  Missing values are not allowed.
+#' @param optional logical. If \code{TRUE}, setting row names and converting column
+#' names (to syntactic names: see \code{make.names}) is optional.
+#' @param ... additional arguments to be passed to or from methods.
+#' @param nm The column names to use
+#' @param width.cutoff ignored
+#' @param collapse ignored
+#' @return A data frame  
+#' @author Holger Hoefling
+#' @export
 as.data.frame.H5R <-  function (x, row.names = NULL, optional = FALSE, ..., nm = paste(deparse(substitute(x), 
     width.cutoff = 500L), collapse = " ")) {
     if(x$rank == 1) {
@@ -881,16 +885,16 @@ as.data.frame.H5R <-  function (x, row.names = NULL, optional = FALSE, ..., nm =
 }
 
 
-##' Coerce to a vector
-##'
-##' Coerce an \code{H5R} object to a vector - in practice this just means setting the \code{dim} to \code{NULL}.
-##' @title Coerce to a vector
-##' @param x The object to coerce into a vector
-##' @param mode Only 'any' supported
-##' @return The object cloned and coerced to a vector 
-##' @author Holger Hoefling
-##' @export
-##' @method as.vector H5R
+#' Coerce to a vector
+#'
+#' Coerce an \code{H5R} object to a vector - in practice this just means setting the \code{dim} to \code{NULL}.
+#' @title Coerce to a vector
+#' @param x The object to coerce into a vector
+#' @param mode Only 'any' supported
+#' @return The object cloned and coerced to a vector 
+#' @author Holger Hoefling
+#' @export
+#' @method as.vector H5R
 as.vector.H5R <- function(x, mode="any") {
     if(mode != "any") {
         stop("Only mode 'any' supported")

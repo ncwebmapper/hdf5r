@@ -18,19 +18,22 @@
 
 
 
-##' Base class that tracks the ids and allows for closing an id
-##' 
-##' This class is not indended for creating objects, but as a base class for all other
-##' H5-derived classes to provide common functionality for id tracking
-##' @docType class
-##' @importFrom R6 R6Class
-##' @return Object of reference class \code{\link{H5RefClass}}. 
-##' @field id Returns the id of the object as an integer
-##' @export
-##' @importFrom bit64 as.integer64
-##' @importFrom bit64 is.na.integer64
-##' @author Holger Hoefling
-##' @seealso H5Class_overview
+#' Base class that tracks the ids and allows for closing an id
+#' 
+#' This class is not indended for creating objects, but as a base class for all other
+#' H5-derived classes to provide common functionality for id tracking
+#' @docType class
+#' @name H5RefClass
+#' @rdname H5RefClass-class
+#' @importFrom R6 R6Class
+#' @return Object of reference class \code{\link{H5RefClass}}. 
+#' @field id Returns the id of the object as an integer
+#' @importFrom bit64 as.integer64
+#' @importFrom bit64 is.na.integer64
+#' @author Holger Hoefling
+NULL
+
+#' @export
 H5RefClass <- R6Class("H5RefClass",
                       public=list(
                           initialize=function(id=NULL) {
