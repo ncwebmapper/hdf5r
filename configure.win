@@ -6,25 +6,25 @@ echo "  checking hdf5 headers and libraries"
 allok=yes
 
 # Makevars file used for CRAN release
-HDF5_VERSION_USE="1_8_14"
+HDF5_VERSION_USE="1_8_16"
 # Get environment variable through R as workaround
 HDF5R_CPPFLAGS=""
 DEFINE_H5FREE_MEMORY="0"
 
 if [ ! -e "${LIB_HDF5}" ]; then
         echo "Environment variable LIB_HDF5 is not set. Attempting to download HDF5 files from repository."
-        echo 'download.file("https://github.com/mannau/h5-libwin/archive/master.zip", destfile = "h5-libwin.zip")' | R --vanilla --slave
+        echo 'download.file("https://github.com/rwinlib/hdf5/archive/master.zip", destfile = "hdf5-master.zip")' | R --vanilla --slave
   if [ ! -e h5-libwin.zip ]; then
           allok=no
   else
           WINC="../inst/include"
           WLIB="lib${R_ARCH}"
           echo "  unpacking current hdf5"
-          unzip h5-libwin.zip
-          cp -rf h5-libwin-master/include inst
-          cp -rf h5-libwin-master/lib src
-          rm h5-libwin.zip
-          rm -rf h5-libwin-master
+          unzip hdf5-master.zip
+          cp -rf hdf5-master/lib-4.9.3/include inst
+          cp -rf hdf5-master/lib-4.9.3/lib src
+          rm hdf5-master.zip
+          rm -rf hdf5-master
           echo "src/lib/${R_ARCH}/libhdf5_cpp.a"
                 if [ ! -e src/lib/${R_ARCH}/libhdf5_cpp.a ]; then
                   allok=no
