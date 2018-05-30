@@ -1,0 +1,13 @@
+line profiling: sample.interval=20000
+#File 1: /Users/mario/CloudStation/Programming/hdf5/hdf5r/R/R6Classes.R
+#File 2: /Users/mario/CloudStation/Programming/hdf5/hdf5r/R/R6Classes_H5D.R
+#File 3: /Users/mario/CloudStation/Programming/hdf5/hdf5r/R/R6Classes_H5Group.R
+#File 4: /Users/mario/CloudStation/Programming/hdf5/hdf5r/R/Common_functions.R
+#File 5: /Users/mario/CloudStation/Programming/hdf5/hdf5r/R/high_level_UI.R
+#File 6: 
+"minusclass" "is.na.integer64" "is.na" "is.na" 1#43 "super$initialize" 2#109 "<Anonymous>" "H5D$new" 3#95 "H5GTD_factory" 4#99 "x$open" 5#81 "[[.H5File" 6#1 "[[" 6#1 "FUN" "lapply" 
+#File 7: /Users/mario/CloudStation/Programming/hdf5/hdf5r/R/R6Classes_H5File.R
+"gc" 7#260 "h5file$close_all" 
+"gc" 7#260 "h5file$close_all" 
+"gc" 7#260 "h5file$close_all" 
+"gc" 7#260 "h5file$close_all" 
