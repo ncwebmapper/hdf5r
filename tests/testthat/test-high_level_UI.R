@@ -273,14 +273,14 @@ test_that("subset_h5.H5D", {
 
     ## write outside of the current set
     ## will trigger an automatic expansion of the current set if possible
-    test[11:15, ] <- 1:20
-    expect_equal(as.vector(test[11:15,]), 1:20)
+    test[11:15, ] <- 1:50
+    expect_equal(as.vector(test[11:15,]), 1:50)
 
     ## also test an indirect subsetting
     get_1 <- function(i, ds) {
         return(ds[i,])
     }
-    expect_equal(get_1(11, test), c(1, 6, 11, 16))
+    expect_equal(get_1(11, test), c(1, 6, 11, 16, 21, 26, 31, 36, 41, 46))
 
 
     ## need to recreate an error where writing into an array failed when there was a missing dimension
