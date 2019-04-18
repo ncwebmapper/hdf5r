@@ -282,8 +282,22 @@ test_that("subset_h5.H5D", {
     ## check that selecting a dimension as NULL yields the correct result
     expect_equal(test[, NULL], matrix(numeric(0), ncol=0, nrow=15))
     
+    # also do one-dimensional subsetting
+    robj_onedim = 1:10
+    file.h5[["onedim"]] <- robj_onedim
+    test_onedim <- file.h5[["onedim"]]
+    expect_equal(test_onedim[1:5], robj_onedim[1:5])
+    # this is the issue #123 that was reported
+    expect_equal(test_onedim[c(1, 3)], robj_onedim[c(1, 3)])
+    expect_equal(test_onedim[c(2, 4)], robj_onedim[c(2, 4)])
+    
     file.h5$close_all()
     file.remove(test_file)
+})
+
+test_that("hyperslab_to_points", {
+    # due to issue #123
+    expect_equal(hdf5r:::hyperslab_to_points(c(2,2,2,1)), c(2,4))
 })
 
 
