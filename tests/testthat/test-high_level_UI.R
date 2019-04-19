@@ -258,7 +258,11 @@ test_that("subset_h5.H5D", {
         c(1, 3, 5, 7), 
         c(7, 5, 3, 1), 
         c(1, 2, 5, 9), 
-        c(9, 5, 2, 1))
+        c(9, 5, 2, 1), 
+        c(1:10, 1:10), 
+        c(1, 2, 2, 2, 3, 4, 5), 
+        c(-1, -2, -3), 
+        c(-1, -3, -4))
     
     for(ind1 in indices_test) {
         for(ind2 in indices_test) {
@@ -305,6 +309,11 @@ test_that("subset_h5.H5D", {
     # this is the issue #123 that was reported
     expect_equal(test_onedim[c(1, 3)], robj_onedim[c(1, 3)])
     expect_equal(test_onedim[c(2, 4)], robj_onedim[c(2, 4)])
+    
+    for(ind1 in indices_test) {
+        expect_equal(test_onedim[ind1], robj_onedim[ind1])
+    }
+
     
     file.h5$close_all()
     file.remove(test_file)

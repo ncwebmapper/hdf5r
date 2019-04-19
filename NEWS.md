@@ -1,4 +1,4 @@
-# hdf5r 1.1.1.8000
+# hdf5r 1.2.0
 - Fixes bug #123: inconsistent subsetting, where certain subsets (usually short and one-dimensional) were
   returned incorrectly (offset by 1)
 
