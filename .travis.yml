@@ -33,7 +33,7 @@ matrix:
       env: HDF5_VERSION=1.10.3
   fast_finish: true
   
-warnings_are_errors: true
+warnings_are_errors: false
 addons:
   apt:
     packages:
