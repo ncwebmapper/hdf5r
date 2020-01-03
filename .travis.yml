@@ -8,7 +8,7 @@ dist: trusty
   
 env:
   global:
-    - PKG_CFLAGS="-pedantic"
+    - PKG_CFLAGS="-pedantic -fno-common"
     - _R_CHECK_CRAN_INCOMING_=FALSE
     - ASAN="-fsanitize=address -fno-omit-frame-pointer"
     - HDF5_RELEASE_URL="https://support.hdfgroup.org/ftp/HDF5/releases"
