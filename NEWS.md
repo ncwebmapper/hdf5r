@@ -1,5 +1,6 @@
 # hdf5r 1.3.4
 - Added installation for MacOS (PR #179 by @dipterix)
+- Added szip fix (PR #180 by @jeroen)
 
 # hdf5r 1.3.3
 - Bugfix for failing test related to 64-bit support
